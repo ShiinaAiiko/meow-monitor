@@ -1,0 +1,87 @@
+.main {
+	padding: 40px 60px;
+}
+saki-input {
+}
+
+.m-item {
+	margin-bottom: 20px;
+}
+
+.m-input-tip {
+	color: #999;
+	font-size: 12px;
+	margin: 4px 0px;
+}
+
+.m-sensor {
+	margin: 0 0 20px 0;
+}
+
+.m-s-title {
+	font-size: 12px;
+  color: #f29cb2;
+}
+
+.m-s-list {
+}
+
+.m-s-l-header {
+	display: flex;
+	justify-content: flex-start;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #eee;
+}
+.m-s-l-h-keywords {
+	width: 120px;
+	color: #666;
+	font-size: 12px;
+}
+.m-s-l-h-description {
+	color: #666;
+	font-size: 12px;
+}
+.m-s-l-main {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+
+.m-s-l-m-item {
+	display: flex;
+	justify-content: flex-start;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #eee;
+}
+.m-s-l-m-i-keywords {
+	width: 120px;
+	color: #000;
+}
+.m-s-l-m-i-description {
+	color: #000;
+}
+
+.m-shortcut {
+}
+
+.m-s-main {
+	margin: 0 0 20px 0;
+}
+
+.m-s-m-item {
+	display: flex;
+	justify-content: space-between;
+	height: 40px;
+	line-height: 40px;
+	border-bottom: 1px solid #eee;
+}
+
+.m-s-m-i-title {
+	color: #000;
+}
+
+.m-s-m-i-content {
+	color: #000;
+}

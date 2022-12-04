@@ -1,0 +1,103 @@
+{
+	"name": "meow-monitor",
+	"version": "1.0.0",
+	"private": true,
+	"description": "For Windows to set process priority",
+	"main": "./dist/main.js",
+	"author": "Shiina Aiiko <shiina@aiiko.club>",
+	"homepage": ".",
+	"scripts": {
+		"el:dev": "nodemon --exec electron ./dist/main.js",
+		"el:tsc": "rm -rf ./dist/ && tsc",
+		"el:build-linux-x64": "electron-builder --linux --x64",
+		"el:build-win-x64": "electron-builder --win --x64",
+		"el:icon": "electron-icon-builder --input=./public/logo.png --output=./public --flatten"
+	},
+	"build": {
+		"productName": "Meow Monitor",
+		"appId": "com.meow.monitor",
+		"copyright": "©2022 Shiina Aiiko",
+		"directories": {
+			"output": "el-build"
+		},
+		"files": [
+			"dist/**/*",
+			"public/**/*",
+			"package.json"
+		],
+		"extraResources": {
+			"from": "./out/",
+			"to": "out/"
+		},
+		"win": {
+			"icon": "public/icons/icon.ico",
+			"target": [
+				"nsis"
+			]
+		},
+		"nsis": {
+			"installerIcon": "public/icons/icon.ico",
+			"uninstallerIcon": "public/icons/icon.ico",
+			"uninstallDisplayName": "Meow Monitor",
+			"oneClick": false,
+			"allowToChangeInstallationDirectory": true,
+			"allowElevation": true,
+			"createDesktopShortcut": true
+		},
+		"linux": {
+			"icon": "public/icons",
+			"target": [
+				"AppImage",
+				"deb"
+			],
+			"desktop": {
+				"Terminal": "false",
+				"X-MultipleArgs": "false",
+				"StartupNotify": "true",
+				"StartupWMClass": "meow-monitor"
+			}
+		},
+		"extends": null
+	},
+	"watch": [
+		"src/electron/dist/*"
+	],
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"dependencies": {
+		"@nyanyajs/utils": "^1.0.13",
+		"auto-launch": "^5.0.5",
+		"blueimp-md5": "^2.19.0",
+		"electron-is-dev": "^2.0.0",
+		"electron-reload": "^2.0.0-alpha.1",
+		"node-cmd": "^5.0.0",
+		"node-powershell": "^5.0.1",
+		"os-utils": "^0.0.14"
+	},
+	"devDependencies": {
+		"@types/blueimp-md5": "^2.18.0",
+		"@types/node": "^18.0.4",
+		"@types/os-utils": "^0.0.1",
+		"electron": "^21.1.0",
+		"electron-builder": "^23.6.0",
+		"electron-icon-builder": "^2.0.1",
+		"typescript": "^4.7.4",
+		"wait-on": "^6.0.1"
+	}
+}

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configure - NyaNya Process Priority</title>
+  <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script>
+  <!-- <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script> -->
+  <link rel="stylesheet" href="./monitor.css">
+</head>
+
+<body>
+  <div class="main">
+    <span class="main-text"></span>
+    <!-- <div class="m-item">
+      <saki-input class="process" height="50px" type="Text" placeholder="Process name" placeholder-animation="MoveUp">
+      </saki-input>
+      <div class="m-input-tip">
+        aaa.exe/ccc.exe/zzz.exe
+      </div>
+    </div>
+    <div class="m-item">
+      <saki-input class="priority" value="128" height="50px" type="Number" placeholder="Set priority"
+        placeholder-animation="MoveUp"></saki-input>
+      <div class="m-input-tip priority">
+        Realtime-256, High-128, AboveNormal-32, Normal-16384, BelowNormal-16384, Low-64
+      </div> 
+    </div>
+    <div class="m-item">
+      <saki-input class="interval" value="10000" height="50px" type="Number" placeholder="Running interval (ms)"
+        placeholder-animation="MoveUp"></saki-input>
+    </div>
+    <div class="m-buttons">
+      <saki-button class="save" type="Primary">Save</saki-button>
+    </div> -->
+  </div>
+</body>
+
+</html>
+
+<script>
+  const main = document.querySelector(".main")
+  // const mainText = document.querySelector(".main-text")
+  let electron = window.require("electron")
+
+  let customizeOutput = ""
+  let isSetSize = false
+  let route = "/monitor.html"
+
+  // main.innerHTML = "2022-12-03&nbsp&nbsp&nbsp03:21:04 CPU 04% MEM 38%"
+  console.log(electron.webFrame)
+  console.log(main.clientWidth, main.clientHeight)
+
+  const getMonitorData = () => {
+    electron.ipcRenderer.send('getMonitorData', {
+      route,
+      customizeOutput
+    })
+  }
+
+  electron.ipcRenderer.on('getMonitorData', (
+    event,
+    data
+  ) => {
+    console.log("getMonitorData", isSetSize, data, main.querySelector("span"))
+    main.innerHTML = data.replace(/`/g, '<span class="hide">1</span>')
+    // isSetSize = true
+    // if (isSetSize) return
+    console.log("宽高", main.clientWidth, main.clientHeight)
+    electron.ipcRenderer.send('setSize', {
+      route,
+      width: main.clientWidth,
+      height: main.clientHeight,
+    })
+  })
+
+  electron.ipcRenderer.send('getConfig', {
+    route: "/monitor.html"
+  })
+
+  electron.ipcRenderer.on('getConfig', (
+    event,
+    data
+  ) => {
+    console.log("getConfig", data)
+    data.alignment && main.classList.add(data.alignment)
+    data.style && main.classList.add(data.style)
+  })
+
+
+  electron.ipcRenderer.send('getCustomizeOutput', {
+    route: "/monitor.html"
+  })
+
+  let timer
+
+  electron.ipcRenderer.on('getCustomizeOutput', (
+    event,
+    data
+  ) => {
+    // console.log("getCustomizeOutput", data)
+    customizeOutput = data
+    getMonitorData()
+    timer && (clearInterval(timer))
+    // console.log(new Date().getMilliseconds())
+    setTimeout(() => {
+      timer = setInterval(() => {
+        getMonitorData()
+      }, 1000)
+    }, 1000 - new Date().getMilliseconds())
+  })
+  // let languages = "en-US"
+
+  // let processName = ""
+  // let priority = 128
+  // let interval = 10000
+  // const processInput = document.querySelector(".process")
+  // processInput.addEventListener("changevalue", e => {
+  //   // console.log(e)
+  //   processName = e.detail
+  // })
+  // const priorityInput = document.querySelector(".priority")
+  // const priorityTipInput = document.querySelector(".m-input-tip.priority")
+  // priorityInput.addEventListener("changevalue", e => {
+  //   // console.log(e)
+  //   priority = e.detail
+  // })
+  // const intervalInput = document.querySelector(".interval")
+  // intervalInput.addEventListener("changevalue", e => {
+  //   // console.log(e)
+  //   interval = e.detail
+  // })
+  // const saveBtn = document.querySelector(".save")
+  // saveBtn.addEventListener("tap", e => {
+  //   if (!processName) {
+  //     processInput.setAttribute("error", t("processNameError"))
+  //     return
+  //   }
+  //   if (interval < 1000) {
+  //     intervalInput.setAttribute("error", t("intervalError"))
+  //     return
+  //   }
+  //   // console.log(processName, priority, interval)
+  //   // console.log(electron)
+  //   electron.ipcRenderer.send('saveData', {
+  //     processName,
+  //     priority,
+  //     interval
+  //   })
+
+
+  //   let el = document.createElement('saki-snackbar')
+  //   // console.log('state.app.status', el)
+  //   // console.log(el)
+  //   el.message = t("savedSuccessfully")
+  //   el.vertical = "top"
+  //   el.horizontal = "center"
+  //   el.autoHideDuration = 2000
+  //   el.backgroundColor = 'rgb(242, 156, 178)'
+  //   el.color = '#fff'
+  //   el.addEventListener('load', () => {
+  //     el.open()
+  //   })
+  //   el.addEventListener('close', () => {
+  //     document.body.contains(el) && document.body.removeChild(el)
+  //     el = null
+  //   })
+  //   document.body.appendChild(el)
+  // })
+
+
+  // electron.ipcRenderer.send('getData', {
+  //   processName,
+  //   priority,
+  //   interval
+  // })
+
+  // electron.ipcRenderer.on('getData', (
+  //   event,
+  //   data
+  // ) => {
+  //   console.log(data)
+  //   if (data.processName) {
+  //     processName = data.processName
+  //     priority = data.priority
+  //     interval = data.interval
+  //     processInput.setAttribute("value", data.processName)
+  //     priorityInput.setAttribute("value", data.priority)
+  //     intervalInput.setAttribute("value", data.interval)
+  //   }
+  // })
+
+
+
+
+  // const resources = {
+  //   'zh-CN': {
+  //     appName: "NyaNya Process Priority",
+  //     title: '配置',
+
+  //     processName: '进程名',
+  //     priority: '优先级',
+  //     priorityList: '实时-256, 高-128, 高于正常-32, 正常-16384, 低于正常-16384, 低-64',
+  //     runningInterval: '运行间隔 (ms)',
+
+  //     save: "保存",
+
+  //     savedSuccessfully: "保存成功",
+  //     processNameError: "进程名不能为空。",
+  //     intervalError: "时间间隔不能小于 1000 毫秒。",
+  //   },
+  //   'zh-TW': {
+  //     appName: "NyaNya Process Priority",
+  //     title: '配置',
+
+  //     processName: '進程名',
+  //     priority: '優先級',
+  //     priorityList: '實時-256, 高-128, 高於正常-32, 正常-16384, 低於正常-16384, 低-64',
+  //     runningInterval: '運行間隔 (ms)',
+
+  //     save: "保存",
+
+  //     savedSuccessfully: "保存成功",
+  //     processNameError: "進程名不能為空。",
+  //     intervalError: "時間間隔不能小於 1000 毫秒。",
+
+  //   },
+  //   'en-US': {
+  //     appName: "NyaNya Process Priority",
+  //     title: 'Configure',
+
+  //     process: 'Process',
+  //     priority: 'Priority',
+  //     priorityList: 'Realtime-256, High-128, AboveNormal-32, Normal-16384, BelowNormal-16384, Low-64',
+  //     runningInterval: 'Running interval (ms)',
+
+  //     save: "Save",
+
+  //     savedSuccessfully: "Saved successfully",
+  //     processNameError: "Process name cannot be blank.",
+  //     intervalError: "The interval cannot be less than 1000ms.",
+  //   },
+  // }
+
+
+  // const t = (parameter) => {
+  //   return resources[languages][parameter]
+  // }
+</script>

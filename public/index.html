@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configure - NyaNya Process Priority</title>
+  <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script>
+  <!-- <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script> -->
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div class="main">
+    <div class="m-item">
+      <saki-input class="m-i-co" height="50px" type="Text" placeholder="Process name" placeholder-animation="MoveUp">
+      </saki-input>
+      <div class="m-input-tip co">
+        Example
+      </div>
+    </div>
+    <div class="m-sensor">
+      <div class="m-s-title">Sensor Keywords</div>
+      <div class="m-s-list">
+        <div class="m-s-l-header">
+          <div class="m-s-l-h-keywords">Keywords</div>
+          <div class="m-s-l-h-description">Description</div>
+        </div>
+        <div class="m-s-l-main">
+          <div class="m-s-l-m-item">
+            <div class="m-s-l-m-i-keywords">Time</div>
+            <div class="m-s-l-m-i-description">Current time</div>
+          </div>
+          <div class="m-s-l-m-item">
+            <div class="m-s-l-m-i-keywords">CPU</div>
+            <div class="m-s-l-m-i-description">Average CPU usage</div>
+          </div>
+          <div class="m-s-l-m-item">
+            <div class="m-s-l-m-i-keywords">Mem</div>
+            <div class="m-s-l-m-i-description">Memory usage</div>
+          </div>
+          <div class="m-s-l-m-item">
+            <div class="m-s-l-m-i-keywords">GPU</div>
+            <div class="m-s-l-m-i-description">Nvidia gpu utiliztion</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="m-shortcut">
+      <div class="m-s-title">快捷键</div>
+      <div class="m-s-main">
+        <div class="m-s-m-item">
+          <div class="m-s-m-i-title">启动监视器拖拽</div>
+          <div class="m-s-m-i-content">Control(Ctrl) + Alt + m</div>
+        </div>
+      </div>
+    </div>
+    <div class="m-buttons">
+      <saki-button class="save" type="Primary">Save</saki-button>
+    </div>
+  </div>
+</body>
+
+</html>
+
+<script>
+  const resources = {
+    'zh-CN': {
+      appName: "喵视器",
+      title: '配置',
+
+      customizeOutput: '自定义输出',
+      coTip: "例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+
+      save: "保存",
+
+      savedSuccessfully: "保存成功",
+      customizeOutputError: "自定义输出不能为空白",
+
+      sensorKeywords: "传感器关键字",
+      keywords: "关键词",
+      description: "描述",
+      timeSD: "当前时间",
+      cpuSD: "平均CPU使用率",
+      memSD: "内存使用率",
+      gpuSD: "NVIDIA GPU 使用率",
+
+      shortcutKeys: "快捷键",
+      switchMonitorDrag: "切换监视器拖动",
+    },
+    'zh-TW': {
+      appName: "喵視器",
+      title: '配置',
+
+      customizeOutput: '自定義輸出',
+      coTip: "例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+
+      save: "保存",
+
+      savedSuccessfully: "保存成功",
+      customizeOutputError: "自定義輸出不能為空白",
+
+      sensorKeywords: "傳感器關鍵字",
+      keywords: "關鍵詞",
+      description: "描述",
+      timeSD: "當前時間",
+      cpuSD: "平均CPU使用率",
+      memSD: "內存使用率",
+      gpuSD: "NVIDIA GPU 使用率",
+
+      shortcutKeys: "快捷鍵",
+      switchMonitorDrag: "切換監視器拖動",
+
+    },
+    'en-US': {
+      appName: "Meow Monitor",
+      title: 'Configure',
+
+      customizeOutput: 'Customize output',
+      coTip: "Ex: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+
+
+      save: "Save",
+
+      savedSuccessfully: "Saved successfully",
+      customizeOutputError: "Customize output cannot be blank.",
+
+
+      sensorKeywords: "Sensor keywords",
+      keywords: "Keywords",
+      description: "Description",
+      timeSD: "Current time",
+      cpuSD: "Average CPU usage",
+      memSD: "Memory usage",
+      gpuSD: "Nvidia gpu utiliztion",
+
+      shortcutKeys: "Shortcut keys",
+      switchMonitorDrag: "Switch monitor drag",
+    },
+  }
+
+
+  const t = (parameter) => {
+    return resources[languages][parameter] || parameter
+  }
+
+
+
+  let electron = window.require("electron")
+
+  let languages = "en-US"
+
+  let customizeOutputContent = ""
+  let priority = 128
+  let interval = 10000
+  const coInput = document.querySelector(".m-i-co")
+  const coipInput = document.querySelector(".m-input-tip.co")
+  const sensorList = document.querySelector(".m-sensor .m-s-l-main")
+
+
+  coInput.addEventListener("changevalue", e => {
+    // console.log(e)
+    customizeOutputContent = e.detail
+  })
+  const saveBtn = document.querySelector(".save")
+  saveBtn.addEventListener("tap", e => {
+    if (!customizeOutputContent) {
+      coInput.setAttribute("error", t("customizeOutputError"))
+      return
+    }
+    // console.log(processName, priority, interval)
+    electron.ipcRenderer.send('setCustomizeOutput', {
+      data: customizeOutputContent,
+    })
+
+
+    let el = document.createElement('saki-snackbar')
+    // console.log('state.app.status', el)
+    // console.log(el)
+    el.message = t("savedSuccessfully")
+    el.vertical = "top"
+    el.horizontal = "center"
+    el.autoHideDuration = 2000
+    el.backgroundColor = 'rgb(242, 156, 178)'
+    el.color = '#fff'
+    el.addEventListener('load', () => {
+      el.open()
+    })
+    el.addEventListener('close', () => {
+      document.body.contains(el) && document.body.removeChild(el)
+      el = null
+    })
+    document.body.appendChild(el)
+  })
+
+
+  electron.ipcRenderer.send('getCustomizeOutput', {
+    route: "/index.html"
+  })
+
+  electron.ipcRenderer.on('getCustomizeOutput', (
+    event,
+    data
+  ) => {
+    console.log("getCustomizeOutput", data)
+    customizeOutputContent = data
+    coInput.setAttribute("value", data)
+  })
+
+
+  electron.ipcRenderer.send('getData', {
+    customizeOutputContent,
+    // priority,
+    // interval
+  })
+
+  electron.ipcRenderer.on('getData', (
+    event,
+    data
+  ) => {
+    console.log(data)
+    if (data.customizeOutputContent) {
+      customizeOutputContent = data.customizeOutputContent
+      // priority = data.priority
+      // interval = data.interval
+      coInput.setAttribute("value", data.customizeOutputContent)
+    }
+  })
+
+
+  electron.ipcRenderer.send('getLanguages', {
+    route: "/index.html"
+  })
+
+  electron.ipcRenderer.on('getLanguages', (
+    event,
+    data
+  ) => {
+    console.log(data)
+    languages = data
+    document.title = t("title") + " - " + t("appName")
+
+
+    coInput.setAttribute("placeholder", t("customizeOutput"))
+    coipInput.innerHTML = t("coTip")
+    saveBtn.innerHTML = t("save")
+    document.querySelector(".m-sensor .m-s-title").innerHTML = t("sensorKeywords")
+    document.querySelector(".m-sensor .m-s-list .m-s-l-h-keywords").innerHTML = t("keywords")
+    document.querySelector(".m-sensor .m-s-list .m-s-l-h-description").innerHTML = t("description")
+    document.querySelector(".m-shortcut .m-s-title").innerHTML = t("shortcutKeys")
+    document.querySelector(".m-shortcut .m-s-main .m-s-m-item .m-s-m-i-title").innerHTML = t("switchMonitorDrag")
+
+    const sensorKeywords = [{
+      keyword: "Time",
+      description: t("timeSD"),
+    }, {
+      keyword: "CPU",
+      description: t("cpuSD"),
+    }, {
+      keyword: "Mem",
+      description: t("memSD"),
+    }, {
+      keyword: "GPU",
+      description: t("gpuSD"),
+    }]
+
+    let sensorListHTML = ``
+
+    // sensorList
+    sensorKeywords.forEach(v => {
+      sensorListHTML += `
+      <div class="m-s-l-m-item">
+          <div class="m-s-l-m-i-keywords">${v.keyword}</div>
+          <div class="m-s-l-m-i-description">${v.description}</div>
+        </div>
+      `
+    })
+    sensorList.innerHTML = sensorListHTML
+  })
+</script>
