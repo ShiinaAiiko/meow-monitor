@@ -38,7 +38,7 @@ export let autoStart = 'close'
 export let customizeOutput = '{timer}'
 export let monitorSize = {
 	w: 700,
-	h: 100,
+	h: 30,
 }
 
 export const setLanguages = async (lang: string) => {

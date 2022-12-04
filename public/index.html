@@ -6,10 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configure - NyaNya Process Priority</title>
-  <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script>
-  <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script>
-  <!-- <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
-  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script> -->
+  <!-- <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script> -->
+  <!-- <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
+  <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script>
   <link rel="stylesheet" href="./index.css">
 </head>
 
@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="m-sensor">
-      <div class="m-s-title">Sensor Keywords</div>
+      <div class="m-s-title sensor">Sensor Keywords</div>
       <div class="m-s-list">
         <div class="m-s-l-header">
           <div class="m-s-l-h-keywords">Keywords</div>
@@ -86,7 +86,13 @@
       timeSD: "当前时间",
       cpuSD: "平均CPU使用率",
       memSD: "内存使用率",
-      gpuSD: "NVIDIA GPU 使用率",
+      nvgpuSD: "NVIDIA GPU 使用率",
+      nvgpuTempSD: "NVIDIA GPU 温度",
+      nvgpuPowerSD: "NVIDIA GPU 功率",
+      nvgpuMemSD: "NVIDIA GPU 内存使用情况",
+      nvgpuTMSD: "NVIDIA GPU 总内存 (MiB)",
+      nvgpuFMSD: "NVIDIA GPU 可用内存（ MiB）",
+      nvgpuUMSD: "NVIDIA GPU 使用内存 (MiB)",
 
       shortcutKeys: "快捷键",
       switchMonitorDrag: "切换监视器拖动",
@@ -109,7 +115,13 @@
       timeSD: "當前時間",
       cpuSD: "平均CPU使用率",
       memSD: "內存使用率",
-      gpuSD: "NVIDIA GPU 使用率",
+      nvgpuSD: "NVIDIA GPU 使用率",
+      nvgpuTempSD: "NVIDIA GPU 溫度",
+      nvgpuPowerSD: "NVIDIA GPU 功率",
+      nvgpuMemSD: "NVIDIA GPU 內存使用情況",
+      nvgpuTMSD: "NVIDIA GPU 總內存 (MiB)",
+      nvgpuFMSD: "NVIDIA GPU 可用內存（ MiB）",
+      nvgpuUMSD: "NVIDIA GPU 使用內存 (MiB)",
 
       shortcutKeys: "快捷鍵",
       switchMonitorDrag: "切換監視器拖動",
@@ -135,7 +147,13 @@
       timeSD: "Current time",
       cpuSD: "Average CPU usage",
       memSD: "Memory usage",
-      gpuSD: "Nvidia gpu utiliztion",
+      nvgpuSD: "Nvidia gpu utiliztion",
+      nvgpuTempSD: "Nvidia gpu temperature",
+      nvgpuPowerSD: "Nvidia gpu power",
+      nvgpuMemSD: "Nvidia gpu memory usage",
+      nvgpuTMSD: "Nvidia gpu total memory(MiB)",
+      nvgpuFMSD: "Nvidia gpu free memory(MiB)",
+      nvgpuUMSD: "Nvidia gpu used memory(MiB)",
 
       shortcutKeys: "Shortcut keys",
       switchMonitorDrag: "Switch monitor drag",
@@ -156,6 +174,11 @@
   let customizeOutputContent = ""
   let priority = 128
   let interval = 10000
+  let route = "/index.html"
+
+
+
+  const mainEl = document.body.querySelector(".main")
   const coInput = document.querySelector(".m-i-co")
   const coipInput = document.querySelector(".m-input-tip.co")
   const sensorList = document.querySelector(".m-sensor .m-s-l-main")
@@ -263,10 +286,27 @@
       keyword: "Mem",
       description: t("memSD"),
     }, {
-      keyword: "GPU",
-      description: t("gpuSD"),
+      keyword: "NVGPU",
+      description: t("nvgpuSD"),
+    }, {
+      keyword: "NVGPUTemp",
+      description: t("nvgpuTempSD"),
+    }, {
+      keyword: "NVGPUPower",
+      description: t("nvgpuPowerSD"),
+    }, {
+      keyword: "NVGPUMem",
+      description: t("nvgpuMemSD"),
+    }, {
+      keyword: "NVGPUTotalMem",
+      description: t("nvgpuTMSD"),
+    }, {
+      keyword: "NVGPUFreeMem",
+      description: t("nvgpuFMSD"),
+    }, {
+      keyword: "NVGPUUsedMem",
+      description: t("nvgpuUMSD"),
     }]
-
     let sensorListHTML = ``
 
     // sensorList
@@ -279,5 +319,12 @@
       `
     })
     sensorList.innerHTML = sensorListHTML
+    setTimeout(() => {
+      electron.ipcRenderer.send('setSize', {
+        route,
+        width: mainEl.clientWidth,
+        height: mainEl.clientHeight,
+      })
+    },100);
   })
 </script>

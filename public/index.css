@@ -1,5 +1,13 @@
+body {
+	--table-height: 30px;
+	overflow: hidden;
+}
 .main {
-	padding: 40px 60px;
+	padding: 40px 40px;
+	width: 480px;
+	height: 650px;
+	margin: 0 auto;
+	overflow: hidden;
 }
 saki-input {
 }
@@ -20,8 +28,10 @@ saki-input {
 
 .m-s-title {
 	font-size: 12px;
-  color: #f29cb2;
+	color: #f29cb2;
 }
+/* .m-s-title.sensor {
+} */
 
 .m-s-list {
 }
@@ -29,9 +39,10 @@ saki-input {
 .m-s-l-header {
 	display: flex;
 	justify-content: flex-start;
-	height: 40px;
-	line-height: 40px;
+	height: var(--table-height);
+	line-height: var(--table-height);
 	border-bottom: 1px solid #eee;
+	padding: 0 10px;
 }
 .m-s-l-h-keywords {
 	width: 120px;
@@ -51,9 +62,15 @@ saki-input {
 .m-s-l-m-item {
 	display: flex;
 	justify-content: flex-start;
-	height: 40px;
-	line-height: 40px;
+	font-size: 12px;
+	height: var(--table-height);
+	line-height: var(--table-height);
 	border-bottom: 1px solid #eee;
+	cursor: pointer;
+	padding: 0 10px;
+}
+.m-s-l-m-item:hover {
+	background-color: rgb(243, 243, 243);
 }
 .m-s-l-m-i-keywords {
 	width: 120px;
@@ -73,8 +90,9 @@ saki-input {
 .m-s-m-item {
 	display: flex;
 	justify-content: space-between;
-	height: 40px;
-	line-height: 40px;
+	height: var(--table-height);
+	line-height: var(--table-height);
+	font-size: 12px;
 	border-bottom: 1px solid #eee;
 }
 
