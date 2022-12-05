@@ -15,6 +15,11 @@ export const resources = {
 		dark: '暗黑',
 		light: '明亮',
 
+		updateSpeed: '更新速度',
+		high: '高',
+		normal: '正常',
+		low: '低',
+
 		dragPosition: '拖拽位置',
 		open: '打开',
 		close: '关闭',
@@ -47,7 +52,12 @@ export const resources = {
 
 		style: '風格',
 		dark: '暗黑',
-		light: '明亮',
+    light: '明亮',
+    
+		updateSpeed: '更新速度',
+		high: '高',
+		normal: '正常',
+		low: '低',
 
 		dragPosition: '拖拽位置',
 		open: '打開',
@@ -82,6 +92,11 @@ export const resources = {
 		style: 'Style',
 		dark: 'Dark',
 		light: 'Light',
+
+		updateSpeed: 'Update speed',
+		high: 'High',
+		normal: 'Normal',
+		low: 'Low',
 
 		dragPosition: 'Drag position',
 		open: 'Open',

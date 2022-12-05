@@ -40,6 +40,7 @@ export let monitorSize = {
 	w: 700,
 	h: 30,
 }
+export let updateSpeed = 'normal'
 
 export const setLanguages = async (lang: string) => {
 	languages = lang
@@ -75,6 +76,10 @@ export const setCustomizeOutput = async (a: string) => {
 export const setMonitorSize = async (a: typeof monitorSize) => {
 	monitorSize = a
 	await systemConfig.set('monitorSize', monitorSize)
+}
+export const setUpdateSpeed = async (a: typeof updateSpeed) => {
+	updateSpeed = a
+	await systemConfig.set('updateSpeed', updateSpeed)
 }
 
 export const initAppConfig = async () => {
@@ -175,6 +180,11 @@ export const initConfig = async () => {
 	await systemConfig.getAndSet('monitorSize', (v) => {
 		monitorSize = v ? v : monitorSize
 		return v ? v : monitorSize
+	})
+
+	await systemConfig.getAndSet('updateSpeed', (v) => {
+		updateSpeed = v ? v : updateSpeed
+		return v ? v : updateSpeed
 	})
 
 	autoLauncher

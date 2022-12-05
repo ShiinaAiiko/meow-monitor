@@ -30,6 +30,8 @@ import {
 	setDragPosition,
 	autoStart,
 	setAutoStart,
+	updateSpeed,
+	setUpdateSpeed,
 } from './config'
 
 import {
@@ -111,6 +113,38 @@ export const getMenu = () => {
 			],
 		},
 		{
+			label: t('updateSpeed'),
+			submenu: [
+				{
+					label: t('high') + ' (1s)',
+					checked: updateSpeed === 'high',
+					type: 'radio',
+					click() {
+						setUpdateSpeed('high')
+						reloadMonitor()
+					},
+				}, 
+				{
+					label: t('normal') + ' (2s)',
+					checked: updateSpeed === 'normal',
+					type: 'radio',
+					click() {
+						setUpdateSpeed('normal')
+						reloadMonitor()
+					},
+				},
+				{
+					label: t('low') + ' (5s)',
+					checked: updateSpeed === 'low',
+					type: 'radio',
+					click() {
+						setUpdateSpeed('low')
+						reloadMonitor()
+					},
+				},
+			],
+		},
+		{
 			label: t('dragPosition'),
 			submenu: [
 				{
@@ -118,7 +152,6 @@ export const getMenu = () => {
 					checked: dragPosition === 'open',
 					type: 'radio',
 					click() {
-
 						openDrag('open')
 						reloadMonitor()
 					},
@@ -128,7 +161,6 @@ export const getMenu = () => {
 					checked: dragPosition === 'close',
 					type: 'radio',
 					click() {
-
 						openDrag('close')
 						reloadMonitor()
 					},

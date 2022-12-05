@@ -21,6 +21,7 @@ import {
 	// msg,
 	// updateMsg,
 	setDragPosition,
+	updateSpeed,
 } from '../config'
 
 const mkdirsSync = (dirname: string) => {
@@ -179,19 +180,31 @@ const getNetworkSpeed = () => {
 	}>(async (resolve) => {
 		let upload = 0
 		let download = 0
+		let p: any[] = []
 		try {
 			const res = await si.networkInterfaces()
 			const net = res.filter((v) => {
-				return v['default']
+				return !v?.virtual && v?.ip4 && v.type
 			})
+
 			if (net.length) {
 				// console.log('net', net)
-				const netStats = await si.networkStats(net[0].iface)
-				if (netStats.length) {
-					upload = netStats?.[0].tx_sec || 0
-					download = netStats?.[0].rx_sec || 0
-				}
+				net.forEach((v) => {
+					if (!v.iface) return
+					p.push(
+						new Promise(async (res, rej) => {
+							const netStats = await si.networkStats(v.iface)
+							if (netStats.length) {
+								upload += netStats?.[0].tx_sec || 0
+								download += netStats?.[0].rx_sec || 0
+							}
+							res('')
+						})
+					)
+				})
 			}
+
+			p.length && (await Promise.all(p))
 			resolve({
 				upload,
 				download,
@@ -205,25 +218,31 @@ const getNetworkSpeed = () => {
 	})
 }
 
+const formartNetworkSpeed = (s: number) => {
+	if (s >= 1024 * 1024) {
+		return (s / 1024 / 1024).toFixed(2) + 'MB/s'
+	}
+	return (s / 1024).toFixed(2) + 'KB/s'
+}
+
 let cpuUsage = '00%'
 // let gpuUsage = '00'
 let totalMem = 0
 let freeMem = 0
 let freememPercentage = 0
 let count = 0
-let interval = 2
 let placeholderLength = 2
 let placeholder = '`'
 
 let nvgpuUsage = {
-	temperature:'--',
-	power:'--',
+	temperature: '---',
+	power: '---',
 	videoMemory: {
 		used: 0,
 		total: 0,
 		free: 0,
 	},
-	utilization:'--'
+	utilization: '---',
 }
 
 let networkSpeed = {
@@ -232,10 +251,12 @@ let networkSpeed = {
 }
 let batteryPercent = '00%'
 let batteryCycleCount = 0
-let cpuTemp = '--'
-let cpuCurrentSpeed = '--'
+let cpuTemp = '---'
+let cpuCurrentSpeed = '---'
 
 export const generateMonitorData = (customizeOutput: string) => {
+	let interval = updateSpeed === 'high' ? 1 : updateSpeed === 'normal' ? 2 : 5
+
 	// console.log('customizeOutput', customizeOutput)
 	count++
 	customizeOutput = customizeOutput.replace(/\s+/g, '&nbsp')
@@ -352,6 +373,7 @@ export const generateMonitorData = (customizeOutput: string) => {
 	if (customizeOutput.indexOf('{Network') >= 0) {
 		if (count % interval === 0) {
 			getNetworkSpeed().then((res) => {
+				// console.log('networkSpeed', networkSpeed)
 				networkSpeed = res
 			})
 		}
@@ -359,21 +381,21 @@ export const generateMonitorData = (customizeOutput: string) => {
 	if (customizeOutput.indexOf('{NetworkSpeed}') >= 0) {
 		customizeOutput = customizeOutput.replace(
 			'{NetworkSpeed}',
-			((networkSpeed.upload + networkSpeed.download) / 1024).toFixed(2) + 'KB/s'
+			formartNetworkSpeed(networkSpeed.download + networkSpeed.upload)
 		)
 	}
 
 	if (customizeOutput.indexOf('{NetworkUploadSpeed}') >= 0) {
 		customizeOutput = customizeOutput.replace(
 			'{NetworkUploadSpeed}',
-			(networkSpeed.upload / 1024).toFixed(2) + 'KB/s'
+			formartNetworkSpeed(networkSpeed.upload)
 		)
 	}
 
 	if (customizeOutput.indexOf('{NetworkDownloadSpeed}') >= 0) {
 		customizeOutput = customizeOutput.replace(
 			'{NetworkDownloadSpeed}',
-			(networkSpeed.download / 1024).toFixed(2) + 'KB/s'
+			formartNetworkSpeed(networkSpeed.download)
 		)
 	}
 
