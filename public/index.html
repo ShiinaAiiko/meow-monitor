@@ -22,6 +22,18 @@
         Example
       </div>
     </div>
+    <div class="m-buttons">
+      <saki-button class="save" type="Primary">Save</saki-button>
+    </div>
+    <div class="m-shortcut">
+      <div class="m-s-title">快捷键</div>
+      <div class="m-s-main">
+        <div class="m-s-m-item">
+          <div class="m-s-m-i-title">启动监视器拖拽</div>
+          <div class="m-s-m-i-content">Control(Ctrl) + Alt + m</div>
+        </div>
+      </div>
+    </div>
     <div class="m-sensor">
       <div class="m-s-title sensor">Sensor Keywords</div>
       <div class="m-s-list">
@@ -48,18 +60,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="m-shortcut">
-      <div class="m-s-title">快捷键</div>
-      <div class="m-s-main">
-        <div class="m-s-m-item">
-          <div class="m-s-m-i-title">启动监视器拖拽</div>
-          <div class="m-s-m-i-content">Control(Ctrl) + Alt + m</div>
-        </div>
-      </div>
-    </div>
-    <div class="m-buttons">
-      <saki-button class="save" type="Primary">Save</saki-button>
     </div>
   </div>
 </body>
@@ -91,8 +91,13 @@
       nvgpuPowerSD: "NVIDIA GPU 功率",
       nvgpuMemSD: "NVIDIA GPU 内存使用情况",
       nvgpuTMSD: "NVIDIA GPU 总内存 (MiB)",
-      nvgpuFMSD: "NVIDIA GPU 可用内存（ MiB）",
+      nvgpuFMSD: "NVIDIA GPU 可用内存 (MiB)",
       nvgpuUMSD: "NVIDIA GPU 使用内存 (MiB)",
+      networkSpeedSD: "网络的总速度",
+      networkUploadSpeedSD: "网络上传速度",
+      networkDownloadSpeedSD: "网络下载速度",
+      batteryPercentSD: "电池百分比",
+      batteryCycleCountSD: "电池循环计数",
 
       shortcutKeys: "快捷键",
       switchMonitorDrag: "切换监视器拖动",
@@ -120,8 +125,13 @@
       nvgpuPowerSD: "NVIDIA GPU 功率",
       nvgpuMemSD: "NVIDIA GPU 內存使用情況",
       nvgpuTMSD: "NVIDIA GPU 總內存 (MiB)",
-      nvgpuFMSD: "NVIDIA GPU 可用內存（ MiB）",
+      nvgpuFMSD: "NVIDIA GPU 可用內存 (MiB)",
       nvgpuUMSD: "NVIDIA GPU 使用內存 (MiB)",
+      networkSpeedSD: "網絡的總速度",
+      networkUploadSpeedSD: "網絡上傳速度",
+      networkDownloadSpeedSD: "網絡下載速度",
+      batteryPercentSD: "電池百分比",
+      batteryCycleCountSD: "電池循環計數",
 
       shortcutKeys: "快捷鍵",
       switchMonitorDrag: "切換監視器拖動",
@@ -154,6 +164,11 @@
       nvgpuTMSD: "Nvidia gpu total memory(MiB)",
       nvgpuFMSD: "Nvidia gpu free memory(MiB)",
       nvgpuUMSD: "Nvidia gpu used memory(MiB)",
+      networkSpeedSD: "Total network speed",
+      networkUploadSpeedSD: "Network upload speed",
+      networkDownloadSpeedSD: "Network download speed",
+      batteryPercentSD: "Battery percentage",
+      batteryCycleCountSD: "Battery cycles count",
 
       shortcutKeys: "Shortcut keys",
       switchMonitorDrag: "Switch monitor drag",
@@ -277,36 +292,62 @@
     document.querySelector(".m-shortcut .m-s-main .m-s-m-item .m-s-m-i-title").innerHTML = t("switchMonitorDrag")
 
     const sensorKeywords = [{
-      keyword: "Time",
-      description: t("timeSD"),
-    }, {
-      keyword: "CPU",
-      description: t("cpuSD"),
-    }, {
-      keyword: "Mem",
-      description: t("memSD"),
-    }, {
-      keyword: "NVGPU",
-      description: t("nvgpuSD"),
-    }, {
-      keyword: "NVGPUTemp",
-      description: t("nvgpuTempSD"),
-    }, {
-      keyword: "NVGPUPower",
-      description: t("nvgpuPowerSD"),
-    }, {
-      keyword: "NVGPUMem",
-      description: t("nvgpuMemSD"),
-    }, {
-      keyword: "NVGPUTotalMem",
-      description: t("nvgpuTMSD"),
-    }, {
-      keyword: "NVGPUFreeMem",
-      description: t("nvgpuFMSD"),
-    }, {
-      keyword: "NVGPUUsedMem",
-      description: t("nvgpuUMSD"),
-    }]
+        keyword: "Time",
+        description: t("timeSD"),
+      }, {
+        keyword: "CPU",
+        description: t("cpuSD"),
+      }, {
+        keyword: "Mem",
+        description: t("memSD"),
+      }, {
+        keyword: "NVGPU",
+        description: t("nvgpuSD"),
+      }, {
+        keyword: "NVGPUTemp",
+        description: t("nvgpuTempSD"),
+      }, {
+        keyword: "NVGPUPower",
+        description: t("nvgpuPowerSD"),
+      }, {
+        keyword: "NVGPUMem",
+        description: t("nvgpuMemSD"),
+      }, {
+        keyword: "NVGPUTotalMem",
+        description: t("nvgpuTMSD"),
+      }, {
+        keyword: "NVGPUFreeMem",
+        description: t("nvgpuFMSD"),
+      }, {
+        keyword: "NVGPUUsedMem",
+        description: t("nvgpuUMSD"),
+      }
+
+
+
+
+
+
+
+
+
+      , {
+        keyword: "NetworkSpeed",
+        description: t("networkSpeedSD"),
+      }, {
+        keyword: "NetworkUploadSpeed",
+        description: t("networkUploadSpeedSD"),
+      }, {
+        keyword: "NetworkDownloadSpeed",
+        description: t("networkDownloadSpeedSD"),
+      }, {
+        keyword: "BatteryPercent",
+        description: t("batteryPercentSD"),
+      }, {
+        keyword: "BatteryCycleCount",
+        description: t("batteryCycleCountSD"),
+      }
+    ]
     let sensorListHTML = ``
 
     // sensorList
@@ -319,12 +360,12 @@
       `
     })
     sensorList.innerHTML = sensorListHTML
-    setTimeout(() => {
-      electron.ipcRenderer.send('setSize', {
-        route,
-        width: mainEl.clientWidth,
-        height: mainEl.clientHeight,
-      })
-    },100);
+    // setTimeout(() => {
+    //   electron.ipcRenderer.send('setSize', {
+    //     route,
+    //     width: mainEl.clientWidth,
+    //     height: mainEl.clientHeight,
+    //   })
+    // }, 100);
   })
 </script>

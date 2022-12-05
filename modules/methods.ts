@@ -54,6 +54,7 @@ import { PowerShell } from 'node-powershell'
 import moment from 'moment'
 import { appTray, getMenu } from '../taskMenu'
 import { t } from './languages'
+import si from 'systeminformation'
 
 let timer: NodeJS.Timer
 export let isStart = false
@@ -171,6 +172,39 @@ const getNvidiaGPUUsage = () => {
 	})
 }
 
+const getNetworkSpeed = () => {
+	return new Promise<{
+		upload: number
+		download: number
+	}>(async (resolve) => {
+		let upload = 0
+		let download = 0
+		try {
+			const res = await si.networkInterfaces()
+			const net = res.filter((v) => {
+				return v['default']
+			})
+			if (net.length) {
+				// console.log('net', net)
+				const netStats = await si.networkStats(net[0].iface)
+				if (netStats.length) {
+					upload = netStats?.[0].tx_sec || 0
+					download = netStats?.[0].rx_sec || 0
+				}
+			}
+			resolve({
+				upload,
+				download,
+			})
+		} catch (error) {
+			resolve({
+				upload,
+				download,
+			})
+		}
+	})
+}
+
 let cpuUsage = '00%'
 // let gpuUsage = '00'
 let totalMem = 0
@@ -181,27 +215,27 @@ let interval = 2
 let placeholderLength = 2
 let placeholder = '`'
 
-let nvgpuUsage: {
-	temperature: string
-	power: string
-	videoMemory: {
-		used: number
-		total: number
-		free: number
-	}
-	utilization: string
-} = {
-	temperature: '',
-	power: '',
+let nvgpuUsage = {
+	temperature:'--',
+	power:'--',
 	videoMemory: {
 		used: 0,
 		total: 0,
 		free: 0,
 	},
-	utilization: '',
+	utilization:'--'
 }
 
-export const generateMonitorData = async (customizeOutput: string) => {
+let networkSpeed = {
+	upload: 0,
+	download: 0,
+}
+let batteryPercent = '00%'
+let batteryCycleCount = 0
+let cpuTemp = '--'
+let cpuCurrentSpeed = '--'
+
+export const generateMonitorData = (customizeOutput: string) => {
 	// console.log('customizeOutput', customizeOutput)
 	count++
 	customizeOutput = customizeOutput.replace(/\s+/g, '&nbsp')
@@ -314,6 +348,78 @@ export const generateMonitorData = async (customizeOutput: string) => {
 				: '00%'
 		)
 	}
+
+	if (customizeOutput.indexOf('{Network') >= 0) {
+		if (count % interval === 0) {
+			getNetworkSpeed().then((res) => {
+				networkSpeed = res
+			})
+		}
+	}
+	if (customizeOutput.indexOf('{NetworkSpeed}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{NetworkSpeed}',
+			((networkSpeed.upload + networkSpeed.download) / 1024).toFixed(2) + 'KB/s'
+		)
+	}
+
+	if (customizeOutput.indexOf('{NetworkUploadSpeed}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{NetworkUploadSpeed}',
+			(networkSpeed.upload / 1024).toFixed(2) + 'KB/s'
+		)
+	}
+
+	if (customizeOutput.indexOf('{NetworkDownloadSpeed}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{NetworkDownloadSpeed}',
+			(networkSpeed.download / 1024).toFixed(2) + 'KB/s'
+		)
+	}
+
+	if (customizeOutput.indexOf('{Battery') >= 0) {
+		if (count % interval === 0) {
+			si.battery().then((res) => {
+				batteryCycleCount = res.cycleCount
+				batteryPercent = String(String(res.percent) + '%').padStart(3, '0')
+			})
+		}
+	}
+
+	if (customizeOutput.indexOf('{BatteryPercent}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{BatteryPercent}',
+			batteryPercent
+		)
+	}
+
+	// TEST
+	if (customizeOutput.indexOf('{BatteryCycleCount}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{BatteryCycleCount}',
+			String(batteryCycleCount)
+		)
+	}
+
+	if (customizeOutput.indexOf('{CPUTemp}') >= 0) {
+		customizeOutput = customizeOutput.replace('{CPUTemp}', cpuTemp)
+		if (count % interval === 0) {
+			si.cpuTemperature().then((res) => {
+				cpuTemp = JSON.stringify(res)
+			})
+		}
+	}
+	if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{CPUCurrentSpeed}',
+			cpuCurrentSpeed
+		)
+		if (count % interval === 0) {
+			si.cpuCurrentSpeed().then((res) => {
+				cpuCurrentSpeed = JSON.stringify(res)
+			})
+		}
+	}
 	return customizeOutput
 }
 
@@ -328,6 +434,7 @@ export const reloadMonitor = () => {
 
 export const openDrag = (a: string) => {
 	setDragPosition(a)
+	console.log('a', a)
 
 	const notification = new Notification({
 		title: t('appName'),
@@ -339,7 +446,7 @@ export const openDrag = (a: string) => {
 	setTimeout(() => {
 		notification.close()
 	}, 5000)
-	windows.get('/monitor.html')?.setIgnoreMouseEvents(a === 'open')
+	reloadMonitor()
 }
 
 import oss from 'os'

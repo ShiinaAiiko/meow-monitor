@@ -3632,6 +3632,11 @@ svg2png@4.1.1:
     pn "^1.0.0"
     yargs "^6.5.0"
 
+systeminformation@^5.16.1:
+  version "5.16.1"
+  resolved "https://registry.npmmirror.com/systeminformation/-/systeminformation-5.16.1.tgz#390f6304f30dbdd1270ef84663c841fe642faac3"
+  integrity sha512-n2YQycKZar7ijkkZz10Pnn5mdt3kep2HlGplvQj5d7BFiT9bw7EH/Zeaa8qFS1l93aohp6fistGkcFYgw+6v1g==
+
 tar@^6.1.11:
   version "6.1.12"
   resolved "https://registry.npmmirror.com/tar/-/tar-6.1.12.tgz#3b742fb05669b55671fb769ab67a7791ea1a62e6"

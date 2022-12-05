@@ -4,15 +4,20 @@ body {
 }
 .main {
 	padding: 40px 40px;
-	width: 480px;
+	width: 100%;
 	height: 650px;
 	margin: 0 auto;
-	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 saki-input {
 }
 
 .m-item {
+	margin-bottom: 20px;
+}
+
+.m-buttons {
 	margin-bottom: 20px;
 }
 
@@ -45,7 +50,7 @@ saki-input {
 	padding: 0 10px;
 }
 .m-s-l-h-keywords {
-	width: 120px;
+	width: 160px;
 	color: #666;
 	font-size: 12px;
 }
@@ -73,7 +78,7 @@ saki-input {
 	background-color: rgb(243, 243, 243);
 }
 .m-s-l-m-i-keywords {
-	width: 120px;
+	width: 160px;
 	color: #000;
 }
 .m-s-l-m-i-description {

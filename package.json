@@ -88,7 +88,8 @@
 		"electron-reload": "^2.0.0-alpha.1",
 		"node-cmd": "^5.0.0",
 		"node-powershell": "^5.0.1",
-		"os-utils": "^0.0.14"
+		"os-utils": "^0.0.14",
+		"systeminformation": "^5.16.1"
 	},
 	"devDependencies": {
 		"@types/blueimp-md5": "^2.18.0",

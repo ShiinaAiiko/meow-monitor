@@ -118,9 +118,9 @@ export const getMenu = () => {
 					checked: dragPosition === 'open',
 					type: 'radio',
 					click() {
-						reloadMonitor()
 
 						openDrag('open')
+						reloadMonitor()
 					},
 				},
 				{
@@ -128,9 +128,9 @@ export const getMenu = () => {
 					checked: dragPosition === 'close',
 					type: 'radio',
 					click() {
-						reloadMonitor()
 
 						openDrag('close')
+						reloadMonitor()
 					},
 				},
 				{

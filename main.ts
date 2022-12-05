@@ -73,7 +73,7 @@ const run = () => {
 
 		start()
 		await openMonitor()
-		await openMainWindows()
+		// await openMainWindows()
 	}
 
 	const isFirstInstance = app.requestSingleInstanceLock()

@@ -133,7 +133,7 @@ export const initRouter = () => {
 				height: number
 			}
 		) => {
-			console.log('setSize', width, height)
+			// console.log('setSize', width, height)
 			let win = windows.get(route)
 			win?.setResizable(true)
 			win?.setSize(width, height)
@@ -175,7 +175,7 @@ export const initRouter = () => {
 				.get(route)
 				.webContents.send(
 					'getMonitorData',
-					await generateMonitorData(customizeOutput)
+					generateMonitorData(customizeOutput)
 				)
 		}
 	)

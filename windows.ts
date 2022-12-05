@@ -106,7 +106,7 @@ export const openMainWindows = async () => {
 	}
 	return await createWindow('/index.html', {
 		title: 'Nyanya Progress Priority',
-		width: 480,
+		width: 490,
 		height: 650,
 		// x: 0,
 		// y: 0,
