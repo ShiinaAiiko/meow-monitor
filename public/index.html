@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Configure - NyaNya Process Priority</title>
+  <title>Configure - Meow Monitor</title>
   <!-- <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script> -->
   <!-- <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
   <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
@@ -84,6 +84,7 @@
       keywords: "关键词",
       description: "描述",
       timeSD: "当前时间",
+      bootTimeSD: "系统正常运行时间",
       cpuSD: "平均CPU使用率",
       memSD: "内存使用率",
       nvgpuSD: "NVIDIA GPU 使用率",
@@ -118,6 +119,7 @@
       keywords: "關鍵詞",
       description: "描述",
       timeSD: "當前時間",
+      bootTimeSD: "系統正常運行時間",
       cpuSD: "平均CPU使用率",
       memSD: "內存使用率",
       nvgpuSD: "NVIDIA GPU 使用率",
@@ -155,6 +157,7 @@
       keywords: "Keywords",
       description: "Description",
       timeSD: "Current time",
+      bootTimeSD: "System uptime",
       cpuSD: "Average CPU usage",
       memSD: "Memory usage",
       nvgpuSD: "Nvidia gpu utiliztion",
@@ -294,6 +297,9 @@
     const sensorKeywords = [{
         keyword: "Time",
         description: t("timeSD"),
+      }, {
+        keyword: "BootTime",
+        description: t("bootTimeSD"),
       }, {
         keyword: "CPU",
         description: t("cpuSD"),

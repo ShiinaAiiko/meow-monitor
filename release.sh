@@ -31,7 +31,7 @@ build() {
   rm -rf ./el-build/*.exe
 
   yarn el:build-win-x64
-  # yarn el:build-linux-x64
+  yarn el:build-linux-x64
 
   mv "./el-build/Meow Monitor Setup "$version".exe" \
     ./el-build/$name-v$version-win-x64.exe

@@ -11,7 +11,10 @@ import {
 import path from 'path'
 
 import isDev from 'electron-is-dev'
-
+const isMac = process.platform === 'darwin'
+if (isMac) {
+	app.dock.hide()
+}
 import { Route } from './typings/api'
 import { taskIcon, systemConfig, dragPosition, monitorSize } from './config'
 
@@ -131,14 +134,16 @@ export const openMainWindows = async () => {
 }
 
 export const openMonitor = async () => {
+	let x = await systemConfig.get('/monitor.html' + 'x')
+	let y = await systemConfig.get('/monitor.html' + 'y')
 	let window =
 		windows.get('/monitor.html') ||
 		(await createWindow('/monitor.html', {
 			title: 'Nyanya Progress Priority',
 			width: monitorSize.w,
 			height: monitorSize.h,
-			x: (await systemConfig.get('/monitor.html' + 'x')) || 0,
-			y: (await systemConfig.get('/monitor.html' + 'y')) || 20,
+			x: x || 0,
+			y: y || 20,
 			skipTaskbar: false,
 			hasShadow: true,
 			alwaysOnTop: false,
@@ -163,7 +168,14 @@ export const openMonitor = async () => {
 	// window.focus()
 	window.webContents.send('show')
 	window.setIgnoreMouseEvents(dragPosition === 'open' ? false : true) // 鼠标穿透
-	window.setAlwaysOnTop(true) // 保持置顶
+	window.setAlwaysOnTop(true, 'screen-saver', 100) // 保持置顶
+	
+	window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
+	window.setFullScreenable(false)
+	window.setMinimizable(false)
+	window.moveTop()
+	window.setPosition(x, y)
+
 	window.setSkipTaskbar(true) // 无任务栏图标
 	window.setFocusable(false) // 无任务栏图标
 

@@ -173,7 +173,11 @@ const getNvidiaGPUUsage = () => {
 	})
 }
 
+let networkInterfaces: si.Systeminformation.NetworkInterfacesData[] = []
+let networkInterfacesCount = 0
 const getNetworkSpeed = () => {
+	networkInterfacesCount++
+
 	return new Promise<{
 		upload: number
 		download: number
@@ -182,18 +186,23 @@ const getNetworkSpeed = () => {
 		let download = 0
 		let p: any[] = []
 		try {
-			const res = await si.networkInterfaces()
-			const net = res.filter((v) => {
-				return !v?.virtual && v?.ip4 && v.type
-			})
+			if (networkInterfacesCount % 100 === 0 || networkInterfacesCount === 1) {
+				const res = await si.networkInterfaces()
+				const net = res.filter((v) => {
+					return !v?.virtual && v?.ip4 && v.type
+				})
+				if (net.length) {
+					networkInterfaces = net
+				}
+			}
 
-			if (net.length) {
-				// console.log('net', net)
-				net.forEach((v) => {
+			if (networkInterfaces.length) {
+				networkInterfaces.forEach((v) => {
 					if (!v.iface) return
 					p.push(
 						new Promise(async (res, rej) => {
 							const netStats = await si.networkStats(v.iface)
+							console.log(netStats)
 							if (netStats.length) {
 								upload += netStats?.[0].tx_sec || 0
 								download += netStats?.[0].rx_sec || 0
@@ -202,6 +211,8 @@ const getNetworkSpeed = () => {
 						})
 					)
 				})
+			} else {
+				// networkInterfacesCount = -40
 			}
 
 			p.length && (await Promise.all(p))
@@ -254,6 +265,13 @@ let batteryCycleCount = 0
 let cpuTemp = '---'
 let cpuCurrentSpeed = '---'
 
+let uptime = {
+	d: 0,
+	h: 0,
+	m: 0,
+	s: 0,
+}
+
 export const generateMonitorData = (customizeOutput: string) => {
 	let interval = updateSpeed === 'high' ? 1 : updateSpeed === 'normal' ? 2 : 5
 
@@ -273,7 +291,7 @@ export const generateMonitorData = (customizeOutput: string) => {
 			'{CPU}',
 			cpuUsage.padStart(placeholderLength, placeholder)
 		)
-		if (count % interval === 0) {
+		if (count % interval === 0 || count === 1) {
 			getCPUUsage().then((res) => {
 				res = res * 100
 				cpuUsage =
@@ -303,7 +321,7 @@ export const generateMonitorData = (customizeOutput: string) => {
 		}
 	}
 	if (customizeOutput.indexOf('{NVGPU}') >= 0) {
-		if (count % interval === 0) {
+		if (count % interval === 0 || count === 1) {
 			getNvidiaGPUUsage().then((res) => {
 				nvgpuUsage = res
 			})
@@ -371,7 +389,11 @@ export const generateMonitorData = (customizeOutput: string) => {
 	}
 
 	if (customizeOutput.indexOf('{Network') >= 0) {
-		if (count % interval === 0) {
+		if (count % interval === 0 || count === 1) {
+			networkSpeed.download += Math.random() * 10 - 5
+			networkSpeed.upload += Math.random() * 10 - 5
+		}
+		if (count % (interval * 3 > 10 ? 10 : interval * 3) === 0 || count === 1) {
 			getNetworkSpeed().then((res) => {
 				// console.log('networkSpeed', networkSpeed)
 				networkSpeed = res
@@ -400,7 +422,7 @@ export const generateMonitorData = (customizeOutput: string) => {
 	}
 
 	if (customizeOutput.indexOf('{Battery') >= 0) {
-		if (count % interval === 0) {
+		if (count % 60 === 0 || count === 1) {
 			si.battery().then((res) => {
 				batteryCycleCount = res.cycleCount
 				batteryPercent = String(String(res.percent) + '%').padStart(3, '0')
@@ -441,6 +463,38 @@ export const generateMonitorData = (customizeOutput: string) => {
 				cpuCurrentSpeed = JSON.stringify(res)
 			})
 		}
+	}
+	if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{CPUCurrentSpeed}',
+			cpuCurrentSpeed
+		)
+		if (count % interval === 0) {
+			si.cpuCurrentSpeed().then((res) => {
+				cpuCurrentSpeed = JSON.stringify(res)
+			})
+		}
+	}
+	if (customizeOutput.indexOf('{BootTime}') >= 0) {
+		const ot = oss.uptime()
+		uptime.d = Math.floor(ot / (3600 * 24))
+		uptime.m = Math.floor(ot / 60) % 60
+		uptime.s = Math.floor(ot % 60)
+		uptime.h = Math.floor(ot / 3600) % 24
+		customizeOutput = customizeOutput.replace(
+			'{BootTime}',
+			`${uptime.d}:${String(uptime.h).padStart(2, '0')}:${String(
+				uptime.m
+			).padStart(2, '0')}:${String(uptime.s).padStart(2, '0')}`
+		)
+		// if (count % interval === 0) {
+		// }
+	}
+	if (customizeOutput.indexOf('{Top}') >= 0) {
+		customizeOutput = customizeOutput.replace(
+			'{Top}',
+			String(windows.get('/monitor.html').isAlwaysOnTop())
+		)
 	}
 	return customizeOutput
 }

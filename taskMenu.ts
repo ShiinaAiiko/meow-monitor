@@ -123,7 +123,7 @@ export const getMenu = () => {
 						setUpdateSpeed('high')
 						reloadMonitor()
 					},
-				}, 
+				},
 				{
 					label: t('normal') + ' (2s)',
 					checked: updateSpeed === 'normal',
@@ -277,6 +277,7 @@ export const createTaskMenu = async (type?: 'pink' | 'white') => {
 
 	let icon = type === 'pink' ? taskIcon : taskIcon
 	appTray = new Tray(icon)
+	appTray.setTitle('aaaaa')
 	// console.log(appTray)
 	// console.log(iconDir)
 	//图标的上下文菜单
