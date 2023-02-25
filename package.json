@@ -1,8 +1,8 @@
 {
 	"name": "meow-monitor",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": true,
-	"description": "For Windows to set process priority",
+	"description": "Meow Monitor",
 	"main": "./dist/main.js",
 	"author": "Shiina Aiiko <shiina@aiiko.club>",
 	"homepage": ".",

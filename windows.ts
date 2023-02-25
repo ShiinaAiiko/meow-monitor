@@ -108,7 +108,7 @@ export const openMainWindows = async () => {
 		return window
 	}
 	return await createWindow('/index.html', {
-		title: 'Nyanya Progress Priority',
+		title: 'Moew Monitor',
 		width: 490,
 		height: 650,
 		// x: 0,
@@ -132,14 +132,14 @@ export const openMainWindows = async () => {
 		visible: true,
 	})
 }
-
+let timer: NodeJS.Timer
 export const openMonitor = async () => {
 	let x = await systemConfig.get('/monitor.html' + 'x')
 	let y = await systemConfig.get('/monitor.html' + 'y')
 	let window =
 		windows.get('/monitor.html') ||
 		(await createWindow('/monitor.html', {
-			title: 'Nyanya Progress Priority',
+			title: 'Moew Monitor',
 			width: monitorSize.w,
 			height: monitorSize.h,
 			x: x || 0,
@@ -169,11 +169,16 @@ export const openMonitor = async () => {
 	window.webContents.send('show')
 	window.setIgnoreMouseEvents(dragPosition === 'open' ? false : true) // 鼠标穿透
 	window.setAlwaysOnTop(true, 'screen-saver', 100) // 保持置顶
-	
+
 	window.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true })
 	window.setFullScreenable(false)
 	window.setMinimizable(false)
 	window.moveTop()
+	clearInterval(timer)
+
+	timer = setInterval(() => {
+		window.moveTop()
+	}, 60 * 1000)
 	window.setPosition(x, y)
 
 	window.setSkipTaskbar(true) // 无任务栏图标

@@ -2,7 +2,7 @@
 name="meow-monitor"
 port=16111
 DIR=$(cd $(dirname $0) && pwd)
-version="1.0.0"
+version="1.0.1"
 
 allowMethods=("deb:install push delete build saki-ui")
 
@@ -37,7 +37,7 @@ build() {
     ./el-build/$name-v$version-win-x64.exe
   mv "./el-build/Meow Monitor-"$version".AppImage" \
     ./el-build/$name-v$version-linux-x64.AppImage
-  mv "./el-build/meow-monitor-"$version"_amd64.deb" \
+  mv "./el-build/meow-monitor_"$version"_amd64.deb" \
     ./el-build/$name-v$version-linux-amd64-x64.deb
 
   rm -rf ./el-build/*.exe.blockmap
