@@ -174,11 +174,15 @@ export const openMonitor = async () => {
 	window.setFullScreenable(false)
 	window.setMinimizable(false)
 	window.moveTop()
-	clearInterval(timer)
 
+	window.on('always-on-top-changed', () => {
+		console.log('always-on-top-changed')
+	})
+
+	timer && clearInterval(timer)
 	timer = setInterval(() => {
 		window.moveTop()
-	}, 60 * 1000)
+	}, 2 * 1000)
 	window.setPosition(x, y)
 
 	window.setSkipTaskbar(true) // 无任务栏图标
