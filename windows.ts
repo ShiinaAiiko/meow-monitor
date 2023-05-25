@@ -177,6 +177,7 @@ export const openMonitor = async () => {
 
 	window.on('always-on-top-changed', () => {
 		console.log('always-on-top-changed')
+		window.moveTop()
 	})
 
 	timer && clearInterval(timer)
