@@ -1,377 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Configure - Meow Monitor</title>
+		<!-- <script nomodule="" src="http://192.168.204.132:32300/build/saki-ui.js" data-rh="true"></script> -->
+		<!-- <script type="module" src="http://192.168.204.132:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
+		<script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
+		<script
+			type="module"
+			src="./saki-ui/saki-ui.esm.js"
+			data-rh="true"
+		></script>
+		<link rel="stylesheet" href="./index.css" />
+	</head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Configure - Meow Monitor</title>
-  <!-- <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script> -->
-  <!-- <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
-  <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
-  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script>
-  <link rel="stylesheet" href="./index.css">
-</head>
-
-<body>
-  <div class="main">
-    <div class="m-item">
-      <saki-input class="m-i-co" height="50px" type="Text" placeholder="Process name" placeholder-animation="MoveUp">
-      </saki-input>
-      <div class="m-input-tip co">
-        Example
-      </div>
-    </div>
-    <div class="m-buttons">
-      <saki-button class="save" type="Primary">Save</saki-button>
-    </div>
-    <div class="m-shortcut">
-      <div class="m-s-title">快捷键</div>
-      <div class="m-s-main">
-        <div class="m-s-m-item">
-          <div class="m-s-m-i-title">启动监视器拖拽</div>
-          <div class="m-s-m-i-content">Control(Ctrl) + Alt + m</div>
-        </div>
-      </div>
-    </div>
-    <div class="m-sensor">
-      <div class="m-s-title sensor">Sensor Keywords</div>
-      <div class="m-s-list">
-        <div class="m-s-l-header">
-          <div class="m-s-l-h-keywords">Keywords</div>
-          <div class="m-s-l-h-description">Description</div>
-        </div>
-        <div class="m-s-l-main">
-          <div class="m-s-l-m-item">
-            <div class="m-s-l-m-i-keywords">Time</div>
-            <div class="m-s-l-m-i-description">Current time</div>
-          </div>
-          <div class="m-s-l-m-item">
-            <div class="m-s-l-m-i-keywords">CPU</div>
-            <div class="m-s-l-m-i-description">Average CPU usage</div>
-          </div>
-          <div class="m-s-l-m-item">
-            <div class="m-s-l-m-i-keywords">Mem</div>
-            <div class="m-s-l-m-i-description">Memory usage</div>
-          </div>
-          <div class="m-s-l-m-item">
-            <div class="m-s-l-m-i-keywords">GPU</div>
-            <div class="m-s-l-m-i-description">Nvidia gpu utiliztion</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</body>
-
+	<body>
+		<div class="main">
+			<div class="m-item">
+				<saki-input
+					class="m-i-co"
+					height="50px"
+					type="Text"
+					placeholder="Process name"
+					placeholder-animation="MoveUp"
+				>
+				</saki-input>
+				<div class="m-input-tip co">Example</div>
+			</div>
+			<div class="m-buttons">
+				<saki-button class="save" type="Primary">Save</saki-button>
+			</div>
+			<div class="m-shortcut">
+				<div class="m-s-title">快捷键</div>
+				<div class="m-s-main">
+					<div class="m-s-m-item">
+						<div class="m-s-m-i-title">启动监视器拖拽</div>
+						<div class="m-s-m-i-content">Control(Ctrl) + Alt + m</div>
+					</div>
+				</div>
+			</div>
+			<div class="m-sensor">
+				<div class="m-s-title sensor">Sensor Keywords</div>
+				<div class="m-s-list">
+					<div class="m-s-l-header">
+						<div class="m-s-l-h-keywords">Keywords</div>
+						<div class="m-s-l-h-description">Description</div>
+					</div>
+					<div class="m-s-l-main">
+						<div class="m-s-l-m-item">
+							<div class="m-s-l-m-i-keywords">Time</div>
+							<div class="m-s-l-m-i-description">Current time</div>
+						</div>
+						<div class="m-s-l-m-item">
+							<div class="m-s-l-m-i-keywords">CPU</div>
+							<div class="m-s-l-m-i-description">Average CPU usage</div>
+						</div>
+						<div class="m-s-l-m-item">
+							<div class="m-s-l-m-i-keywords">Mem</div>
+							<div class="m-s-l-m-i-description">Memory usage</div>
+						</div>
+						<div class="m-s-l-m-item">
+							<div class="m-s-l-m-i-keywords">GPU</div>
+							<div class="m-s-l-m-i-description">Nvidia gpu utiliztion</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
 
 <script>
-  const resources = {
-    'zh-CN': {
-      appName: "喵视器",
-      title: '配置',
+	const resources = {
+		'zh-CN': {
+			appName: '喵视器',
+			title: '配置',
 
-      customizeOutput: '自定义输出',
-      coTip: "例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+			customizeOutput: '自定义输出',
+			coTip: '例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko',
 
-      save: "保存",
+			save: '保存',
 
-      savedSuccessfully: "保存成功",
-      customizeOutputError: "自定义输出不能为空白",
+			savedSuccessfully: '保存成功',
+			customizeOutputError: '自定义输出不能为空白',
 
-      sensorKeywords: "传感器关键字",
-      keywords: "关键词",
-      description: "描述",
-      timeSD: "当前时间",
-      bootTimeSD: "系统正常运行时间",
-      cpuSD: "平均CPU使用率",
-      memSD: "内存使用率",
-      nvgpuSD: "NVIDIA GPU 使用率",
-      nvgpuTempSD: "NVIDIA GPU 温度",
-      nvgpuPowerSD: "NVIDIA GPU 功率",
-      nvgpuMemSD: "NVIDIA GPU 内存使用情况",
-      nvgpuTMSD: "NVIDIA GPU 总内存 (MiB)",
-      nvgpuFMSD: "NVIDIA GPU 可用内存 (MiB)",
-      nvgpuUMSD: "NVIDIA GPU 使用内存 (MiB)",
-      networkSpeedSD: "网络的总速度",
-      networkUploadSpeedSD: "网络上传速度",
-      networkDownloadSpeedSD: "网络下载速度",
-      batteryPercentSD: "电池百分比",
-      batteryCycleCountSD: "电池循环计数",
+			sensorKeywords: '传感器关键字',
+			keywords: '关键词',
+			description: '描述',
+			timeSD: '当前时间',
+			bootTimeSD: '系统正常运行时间',
+			cpuSD: '平均CPU使用率',
+			memSD: '内存使用率',
+			nvgpuSD: 'NVIDIA GPU 使用率',
+			nvgpuTempSD: 'NVIDIA GPU 温度',
+			nvgpuPowerSD: 'NVIDIA GPU 功率',
+			nvgpuMemSD: 'NVIDIA GPU 内存使用情况',
+			nvgpuTMSD: 'NVIDIA GPU 总内存 (MiB)',
+			nvgpuFMSD: 'NVIDIA GPU 可用内存 (MiB)',
+			nvgpuUMSD: 'NVIDIA GPU 使用内存 (MiB)',
+			networkSpeedSD: '网络的总速度',
+			networkUploadSpeedSD: '网络上传速度',
+			networkDownloadSpeedSD: '网络下载速度',
+			batteryPercentSD: '电池百分比',
+			batteryCycleCountSD: '电池循环计数',
 
-      shortcutKeys: "快捷键",
-      switchMonitorDrag: "切换监视器拖动",
-    },
-    'zh-TW': {
-      appName: "喵視器",
-      title: '配置',
+			shortcutKeys: '快捷键',
+			switchMonitorDrag: '切换监视器拖动',
 
-      customizeOutput: '自定義輸出',
-      coTip: "例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+			weather: '天气',
+			weatherEmoji: '天气表情符号',
+			temperature: '温度',
+			apparentTemperature: '体感温度',
+			humidity: '湿度',
+			windSpeed: '风速',
+			windDirection: '风向',
+			city: '城市',
+		},
+		'zh-TW': {
+			appName: '喵視器',
+			title: '配置',
 
-      save: "保存",
+			customizeOutput: '自定義輸出',
+			coTip: '例如: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko',
 
-      savedSuccessfully: "保存成功",
-      customizeOutputError: "自定義輸出不能為空白",
+			save: '保存',
 
-      sensorKeywords: "傳感器關鍵字",
-      keywords: "關鍵詞",
-      description: "描述",
-      timeSD: "當前時間",
-      bootTimeSD: "系統正常運行時間",
-      cpuSD: "平均CPU使用率",
-      memSD: "內存使用率",
-      nvgpuSD: "NVIDIA GPU 使用率",
-      nvgpuTempSD: "NVIDIA GPU 溫度",
-      nvgpuPowerSD: "NVIDIA GPU 功率",
-      nvgpuMemSD: "NVIDIA GPU 內存使用情況",
-      nvgpuTMSD: "NVIDIA GPU 總內存 (MiB)",
-      nvgpuFMSD: "NVIDIA GPU 可用內存 (MiB)",
-      nvgpuUMSD: "NVIDIA GPU 使用內存 (MiB)",
-      networkSpeedSD: "網絡的總速度",
-      networkUploadSpeedSD: "網絡上傳速度",
-      networkDownloadSpeedSD: "網絡下載速度",
-      batteryPercentSD: "電池百分比",
-      batteryCycleCountSD: "電池循環計數",
+			savedSuccessfully: '保存成功',
+			customizeOutputError: '自定義輸出不能為空白',
 
-      shortcutKeys: "快捷鍵",
-      switchMonitorDrag: "切換監視器拖動",
+			sensorKeywords: '傳感器關鍵字',
+			keywords: '關鍵詞',
+			description: '描述',
+			timeSD: '當前時間',
+			bootTimeSD: '系統正常運行時間',
+			cpuSD: '平均CPU使用率',
+			memSD: '內存使用率',
+			nvgpuSD: 'NVIDIA GPU 使用率',
+			nvgpuTempSD: 'NVIDIA GPU 溫度',
+			nvgpuPowerSD: 'NVIDIA GPU 功率',
+			nvgpuMemSD: 'NVIDIA GPU 內存使用情況',
+			nvgpuTMSD: 'NVIDIA GPU 總內存 (MiB)',
+			nvgpuFMSD: 'NVIDIA GPU 可用內存 (MiB)',
+			nvgpuUMSD: 'NVIDIA GPU 使用內存 (MiB)',
+			networkSpeedSD: '網絡的總速度',
+			networkUploadSpeedSD: '網絡上傳速度',
+			networkDownloadSpeedSD: '網絡下載速度',
+			batteryPercentSD: '電池百分比',
+			batteryCycleCountSD: '電池循環計數',
 
-    },
-    'en-US': {
-      appName: "Meow Monitor",
-      title: 'Configure',
+			shortcutKeys: '快捷鍵',
+			switchMonitorDrag: '切換監視器拖動',
 
-      customizeOutput: 'Customize output',
-      coTip: "Ex: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko",
+			weather: '天氣',
+			weatherEmoji: '天氣表情符號',
+			temperature: '溫度',
+			apparentTemperature: '體感溫度',
+			humidity: '濕度',
+			windSpeed: '風速',
+			windDirection: '風向',
+			city: '城市',
+		},
+		'en-US': {
+			appName: 'Meow Monitor',
+			title: 'Configure',
 
+			customizeOutput: 'Customize output',
+			coTip: 'Ex: {Time} CPU {CPU} Mem {Mem} GPU {GPU} @ Aiiko',
 
-      save: "Save",
+			save: 'Save',
 
-      savedSuccessfully: "Saved successfully",
-      customizeOutputError: "Customize output cannot be blank.",
+			savedSuccessfully: 'Saved successfully',
+			customizeOutputError: 'Customize output cannot be blank.',
 
+			sensorKeywords: 'Sensor keywords',
+			keywords: 'Keywords',
+			description: 'Description',
+			timeSD: 'Current time',
+			bootTimeSD: 'System uptime',
+			cpuSD: 'Average CPU usage',
+			memSD: 'Memory usage',
+			nvgpuSD: 'Nvidia gpu utiliztion',
+			nvgpuTempSD: 'Nvidia gpu temperature',
+			nvgpuPowerSD: 'Nvidia gpu power',
+			nvgpuMemSD: 'Nvidia gpu memory usage',
+			nvgpuTMSD: 'Nvidia gpu total memory(MiB)',
+			nvgpuFMSD: 'Nvidia gpu free memory(MiB)',
+			nvgpuUMSD: 'Nvidia gpu used memory(MiB)',
+			networkSpeedSD: 'Total network speed',
+			networkUploadSpeedSD: 'Network upload speed',
+			networkDownloadSpeedSD: 'Network download speed',
+			batteryPercentSD: 'Battery percentage',
+			batteryCycleCountSD: 'Battery cycles count',
 
-      sensorKeywords: "Sensor keywords",
-      keywords: "Keywords",
-      description: "Description",
-      timeSD: "Current time",
-      bootTimeSD: "System uptime",
-      cpuSD: "Average CPU usage",
-      memSD: "Memory usage",
-      nvgpuSD: "Nvidia gpu utiliztion",
-      nvgpuTempSD: "Nvidia gpu temperature",
-      nvgpuPowerSD: "Nvidia gpu power",
-      nvgpuMemSD: "Nvidia gpu memory usage",
-      nvgpuTMSD: "Nvidia gpu total memory(MiB)",
-      nvgpuFMSD: "Nvidia gpu free memory(MiB)",
-      nvgpuUMSD: "Nvidia gpu used memory(MiB)",
-      networkSpeedSD: "Total network speed",
-      networkUploadSpeedSD: "Network upload speed",
-      networkDownloadSpeedSD: "Network download speed",
-      batteryPercentSD: "Battery percentage",
-      batteryCycleCountSD: "Battery cycles count",
+			shortcutKeys: 'Shortcut keys',
+			switchMonitorDrag: 'Switch monitor drag',
 
-      shortcutKeys: "Shortcut keys",
-      switchMonitorDrag: "Switch monitor drag",
-    },
-  }
+			weather: 'Weather',
+			weatherEmoji: 'Weather emoji',
+			temperature: 'Temperature',
+			apparentTemperature: 'Apparent temperature',
+			humidity: 'Humidity',
+			windSpeed: 'Wind speed',
+			windDirection: 'Wind direction',
+			city: 'City',
+		},
+	}
 
+	const t = (parameter) => {
+		return resources[language][parameter] || parameter
+	}
 
-  const t = (parameter) => {
-    return resources[languages][parameter] || parameter
-  }
+	let electron = window.require('electron')
 
+	let language = 'en-US'
 
+	let customizeOutputContent = ''
+	let priority = 128
+	let interval = 10000
+	let route = '/index.html'
 
-  let electron = window.require("electron")
+	const mainEl = document.body.querySelector('.main')
+	const coInput = document.querySelector('.m-i-co')
+	const coipInput = document.querySelector('.m-input-tip.co')
+	const sensorList = document.querySelector('.m-sensor .m-s-l-main')
 
-  let languages = "en-US"
+	coInput.addEventListener('changevalue', (e) => {
+		// console.log(e)
+		customizeOutputContent = e.detail
+	})
+	const saveBtn = document.querySelector('.save')
+	saveBtn.addEventListener('tap', (e) => {
+		if (!customizeOutputContent) {
+			coInput.setAttribute('error', t('customizeOutputError'))
+			return
+		}
+		// console.log(processName, priority, interval)
+		electron.ipcRenderer.send('setCustomizeOutput', {
+			data: customizeOutputContent,
+		})
 
-  let customizeOutputContent = ""
-  let priority = 128
-  let interval = 10000
-  let route = "/index.html"
+		let el = document.createElement('saki-snackbar')
+		// console.log('state.app.status', el)
+		// console.log(el)
+		el.message = t('savedSuccessfully')
+		el.vertical = 'top'
+		el.horizontal = 'center'
+		el.autoHideDuration = 2000
+		el.backgroundColor = 'rgb(242, 156, 178)'
+		el.color = '#fff'
+		el.addEventListener('load', () => {
+			el.open()
+		})
+		el.addEventListener('close', () => {
+			document.body.contains(el) && document.body.removeChild(el)
+			el = null
+		})
+		document.body.appendChild(el)
+	})
 
+	electron.ipcRenderer.send('getCustomizeOutput', {
+		route: '/index.html',
+	})
 
+	electron.ipcRenderer.on('getCustomizeOutput', (event, data) => {
+		console.log('getCustomizeOutput', data)
+		customizeOutputContent = data
+		coInput.setAttribute('value', data)
+	})
 
-  const mainEl = document.body.querySelector(".main")
-  const coInput = document.querySelector(".m-i-co")
-  const coipInput = document.querySelector(".m-input-tip.co")
-  const sensorList = document.querySelector(".m-sensor .m-s-l-main")
+	electron.ipcRenderer.send('getData', {
+		customizeOutputContent,
+		// priority,
+		// interval
+	})
 
+	electron.ipcRenderer.on('getData', (event, data) => {
+		console.log(data)
+		if (data.customizeOutputContent) {
+			customizeOutputContent = data.customizeOutputContent
+			// priority = data.priority
+			// interval = data.interval
+			coInput.setAttribute('value', data.customizeOutputContent)
+		}
+	})
 
-  coInput.addEventListener("changevalue", e => {
-    // console.log(e)
-    customizeOutputContent = e.detail
-  })
-  const saveBtn = document.querySelector(".save")
-  saveBtn.addEventListener("tap", e => {
-    if (!customizeOutputContent) {
-      coInput.setAttribute("error", t("customizeOutputError"))
-      return
-    }
-    // console.log(processName, priority, interval)
-    electron.ipcRenderer.send('setCustomizeOutput', {
-      data: customizeOutputContent,
-    })
+	electron.ipcRenderer.send('getLanguage', {
+		route: '/index.html',
+	})
 
+	electron.ipcRenderer.on('getLanguage', (event, data) => {
+		console.log(data)
+		language = data
+		document.title = t('title') + ' - ' + t('appName')
 
-    let el = document.createElement('saki-snackbar')
-    // console.log('state.app.status', el)
-    // console.log(el)
-    el.message = t("savedSuccessfully")
-    el.vertical = "top"
-    el.horizontal = "center"
-    el.autoHideDuration = 2000
-    el.backgroundColor = 'rgb(242, 156, 178)'
-    el.color = '#fff'
-    el.addEventListener('load', () => {
-      el.open()
-    })
-    el.addEventListener('close', () => {
-      document.body.contains(el) && document.body.removeChild(el)
-      el = null
-    })
-    document.body.appendChild(el)
-  })
+		coInput.setAttribute('placeholder', t('customizeOutput'))
+		coipInput.innerHTML = t('coTip')
+		saveBtn.innerHTML = t('save')
+		document.querySelector('.m-sensor .m-s-title').innerHTML =
+			t('sensorKeywords')
+		document.querySelector('.m-sensor .m-s-list .m-s-l-h-keywords').innerHTML =
+			t('keywords')
+		document.querySelector(
+			'.m-sensor .m-s-list .m-s-l-h-description'
+		).innerHTML = t('description')
+		document.querySelector('.m-shortcut .m-s-title').innerHTML =
+			t('shortcutKeys')
+		document.querySelector(
+			'.m-shortcut .m-s-main .m-s-m-item .m-s-m-i-title'
+		).innerHTML = t('switchMonitorDrag')
 
+		const sensorKeywords = [
+			{
+				keyword: 'Time',
+				description: t('timeSD'),
+			},
+			{
+				keyword: 'BootTime',
+				description: t('bootTimeSD'),
+			},
+			{
+				keyword: 'CPU',
+				description: t('cpuSD'),
+			},
+			{
+				keyword: 'Mem',
+				description: t('memSD'),
+			},
+			{
+				keyword: 'NVGPU',
+				description: t('nvgpuSD'),
+			},
+			{
+				keyword: 'NVGPUTemp',
+				description: t('nvgpuTempSD'),
+			},
+			{
+				keyword: 'NVGPUPower',
+				description: t('nvgpuPowerSD'),
+			},
+			{
+				keyword: 'NVGPUMem',
+				description: t('nvgpuMemSD'),
+			},
+			{
+				keyword: 'NVGPUTotalMem',
+				description: t('nvgpuTMSD'),
+			},
+			{
+				keyword: 'NVGPUFreeMem',
+				description: t('nvgpuFMSD'),
+			},
+			{
+				keyword: 'NVGPUUsedMem',
+				description: t('nvgpuUMSD'),
+			},
 
-  electron.ipcRenderer.send('getCustomizeOutput', {
-    route: "/index.html"
-  })
+			{
+				keyword: 'NetworkSpeed',
+				description: t('networkSpeedSD'),
+			},
+			{
+				keyword: 'NetworkUploadSpeed',
+				description: t('networkUploadSpeedSD'),
+			},
+			{
+				keyword: 'NetworkDownloadSpeed',
+				description: t('networkDownloadSpeedSD'),
+			},
+			{
+				keyword: 'BatteryPercent',
+				description: t('batteryPercentSD'),
+			},
+			{
+				keyword: 'BatteryCycleCount',
+				description: t('batteryCycleCountSD'),
+			},
 
-  electron.ipcRenderer.on('getCustomizeOutput', (
-    event,
-    data
-  ) => {
-    console.log("getCustomizeOutput", data)
-    customizeOutputContent = data
-    coInput.setAttribute("value", data)
-  })
+			{
+				keyword: 'Weather',
+				description: t('weather'),
+			},
+			{
+				keyword: 'WeatherEmoji',
+				description: t('weatherEmoji'),
+			},
+			{
+				keyword: 'Temperature',
+				description: t('temperature'),
+			},
+			{
+				keyword: 'ApparentTemperature',
+				description: t('apparentTemperature'),
+			},
+			{
+				keyword: 'Humidity',
+				description: t('humidity'),
+			},
+			{
+				keyword: 'WindSpeed',
+				description: t('windSpeed'),
+			},
+			{
+				keyword: 'WindDirection',
+				description: t('windDirection'),
+			},
+			{
+				keyword: 'City',
+				description: t('city'),
+			},
+		]
+		let sensorListHTML = ``
 
-
-  electron.ipcRenderer.send('getData', {
-    customizeOutputContent,
-    // priority,
-    // interval
-  })
-
-  electron.ipcRenderer.on('getData', (
-    event,
-    data
-  ) => {
-    console.log(data)
-    if (data.customizeOutputContent) {
-      customizeOutputContent = data.customizeOutputContent
-      // priority = data.priority
-      // interval = data.interval
-      coInput.setAttribute("value", data.customizeOutputContent)
-    }
-  })
-
-
-  electron.ipcRenderer.send('getLanguages', {
-    route: "/index.html"
-  })
-
-  electron.ipcRenderer.on('getLanguages', (
-    event,
-    data
-  ) => {
-    console.log(data)
-    languages = data
-    document.title = t("title") + " - " + t("appName")
-
-
-    coInput.setAttribute("placeholder", t("customizeOutput"))
-    coipInput.innerHTML = t("coTip")
-    saveBtn.innerHTML = t("save")
-    document.querySelector(".m-sensor .m-s-title").innerHTML = t("sensorKeywords")
-    document.querySelector(".m-sensor .m-s-list .m-s-l-h-keywords").innerHTML = t("keywords")
-    document.querySelector(".m-sensor .m-s-list .m-s-l-h-description").innerHTML = t("description")
-    document.querySelector(".m-shortcut .m-s-title").innerHTML = t("shortcutKeys")
-    document.querySelector(".m-shortcut .m-s-main .m-s-m-item .m-s-m-i-title").innerHTML = t("switchMonitorDrag")
-
-    const sensorKeywords = [{
-        keyword: "Time",
-        description: t("timeSD"),
-      }, {
-        keyword: "BootTime",
-        description: t("bootTimeSD"),
-      }, {
-        keyword: "CPU",
-        description: t("cpuSD"),
-      }, {
-        keyword: "Mem",
-        description: t("memSD"),
-      }, {
-        keyword: "NVGPU",
-        description: t("nvgpuSD"),
-      }, {
-        keyword: "NVGPUTemp",
-        description: t("nvgpuTempSD"),
-      }, {
-        keyword: "NVGPUPower",
-        description: t("nvgpuPowerSD"),
-      }, {
-        keyword: "NVGPUMem",
-        description: t("nvgpuMemSD"),
-      }, {
-        keyword: "NVGPUTotalMem",
-        description: t("nvgpuTMSD"),
-      }, {
-        keyword: "NVGPUFreeMem",
-        description: t("nvgpuFMSD"),
-      }, {
-        keyword: "NVGPUUsedMem",
-        description: t("nvgpuUMSD"),
-      }
-
-
-
-
-
-
-
-
-
-      , {
-        keyword: "NetworkSpeed",
-        description: t("networkSpeedSD"),
-      }, {
-        keyword: "NetworkUploadSpeed",
-        description: t("networkUploadSpeedSD"),
-      }, {
-        keyword: "NetworkDownloadSpeed",
-        description: t("networkDownloadSpeedSD"),
-      }, {
-        keyword: "BatteryPercent",
-        description: t("batteryPercentSD"),
-      }, {
-        keyword: "BatteryCycleCount",
-        description: t("batteryCycleCountSD"),
-      }
-    ]
-    let sensorListHTML = ``
-
-    // sensorList
-    sensorKeywords.forEach(v => {
-      sensorListHTML += `
-      <div class="m-s-l-m-item">
-          <div class="m-s-l-m-i-keywords">${v.keyword}</div>
-          <div class="m-s-l-m-i-description">${v.description}</div>
-        </div>
-      `
-    })
-    sensorList.innerHTML = sensorListHTML
-    // setTimeout(() => {
-    //   electron.ipcRenderer.send('setSize', {
-    //     route,
-    //     width: mainEl.clientWidth,
-    //     height: mainEl.clientHeight,
-    //   })
-    // }, 100);
-  })
+		// sensorList
+		sensorKeywords.forEach((v) => {
+			sensorListHTML += `
+	     <div class="m-s-l-m-item">
+	         <div class="m-s-l-m-i-keywords">${v.keyword}</div>
+	         <div class="m-s-l-m-i-description">${v.description}</div>
+	       </div>
+	     `
+		})
+		sensorList.innerHTML = sensorListHTML
+		// setTimeout(() => {
+		//   electron.ipcRenderer.send('setSize', {
+		//     route,
+		//     width: mainEl.clientWidth,
+		//     height: mainEl.clientHeight,
+		//   })
+		// }, 100);
+	})
 </script>

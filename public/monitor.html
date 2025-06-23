@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meow Monitor</title>
+    <!-- <script nomodule="" src="http://192.168.204.132:32300/build/saki-ui.js" data-rh="true"></script>
+  <script type="module" src="http://192.168.204.132:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
+    <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
+    <script
+      type="module"
+      src="./saki-ui/saki-ui.esm.js"
+      data-rh="true"
+    ></script>
+    <link rel="stylesheet" href="./monitor.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meow Monitor</title>
-  <!-- <script nomodule="" src="http://192.168.204.129:32300/build/saki-ui.js" data-rh="true"></script>
-  <script type="module" src="http://192.168.204.129:32300/build/saki-ui.esm.js" data-rh="true"></script> -->
-  <script nomodule="" src="./saki-ui/saki-ui.js" data-rh="true"></script>
-  <script type="module" src="./saki-ui/saki-ui.esm.js" data-rh="true"></script>
-  <link rel="stylesheet" href="./monitor.css">
-</head>
-
-<body>
-  <div class="main">
-    <span class="main-text"></span>
-    <!-- <div class="m-item">
+  <body>
+    <div class="main">
+      <span class="main-text"></span>
+      <!-- <div class="m-item">
       <saki-input class="process" height="50px" type="Text" placeholder="Process name" placeholder-animation="MoveUp">
       </saki-input>
       <div class="m-input-tip">
@@ -37,19 +40,18 @@
     <div class="m-buttons">
       <saki-button class="save" type="Primary">Save</saki-button>
     </div> -->
-  </div>
-</body>
-
+    </div>
+  </body>
 </html>
 
 <script>
-  const main = document.querySelector(".main")
+  const main = document.querySelector('.main')
   // const mainText = document.querySelector(".main-text")
-  let electron = window.require("electron")
+  let electron = window.require('electron')
 
-  let customizeOutput = ""
+  let customizeOutput = ''
   let isSetSize = false
-  let route = "/monitor.html"
+  let route = '/monitor.html'
 
   // main.innerHTML = "2022-12-03&nbsp&nbsp&nbsp03:21:04 CPU 04% MEM 38%"
   console.log(electron.webFrame)
@@ -58,54 +60,62 @@
   const getMonitorData = () => {
     electron.ipcRenderer.send('getMonitorData', {
       route,
-      customizeOutput
+      customizeOutput,
     })
   }
 
-  electron.ipcRenderer.on('getMonitorData', (
-    event,
-    data
-  ) => {
-    console.log("getMonitorData", isSetSize, data, main.querySelector("span"))
-    main.innerHTML = data.replace(/`/g, '<span class="hide">1</span>')
+  electron.ipcRenderer.on('getMonitorData', (event, data) => {
+    console.log('getMonitorData', isSetSize, data, main.querySelector('span'))
+    data = data.replace(/`/g, '<span class="hide">1</span>')
+    main.innerHTML = ''
+    const dataArr = data.split('<br>')
+    dataArr.forEach((v, i) => {
+      main.innerHTML += `<div style="padding-top:${
+        i === 0 ? '6px' : ''
+      };padding-bottom:${
+        i === dataArr.length - 1 ? '6px' : ''
+      }" class="main-text">${v}</div>`
+    })
+    // main.innerHTML = data.replace(/`/g, '<span class="hide">1</span>')
     // isSetSize = true
     // if (isSetSize) return
-    console.log("宽高", main.clientWidth, main.clientHeight)
-    electron.ipcRenderer.send('setSize', {
-      route,
-      width: main.clientWidth,
-      height: main.clientHeight,
-    })
+    console.log('宽高', main.clientWidth, main.clientHeight)
+    setTimeout(() => {
+      electron.ipcRenderer.send('setSize', {
+        route,
+        width: Math.max(main.offsetWidth, main.clientWidth, main.scrollWidth),
+        height: main.offsetHeight,
+        tempData: {
+          cw: main.clientWidth,
+          sw: main.scrollWidth,
+          ow: main.offsetWidth,
+        },
+      })
+    }, 50)
   })
 
   electron.ipcRenderer.send('getConfig', {
-    route: "/monitor.html"
+    route: '/monitor.html',
   })
 
-  electron.ipcRenderer.on('getConfig', (
-    event,
-    data
-  ) => {
-    console.log("getConfig", data)
+  electron.ipcRenderer.on('getConfig', (event, data) => {
+    console.log('getConfig', data)
     data.alignment && main.classList.add(data.alignment)
     data.style && main.classList.add(data.style)
+    main.style.fontSize = data.fontSize
   })
 
-
   electron.ipcRenderer.send('getCustomizeOutput', {
-    route: "/monitor.html"
+    route: '/monitor.html',
   })
 
   let timer
 
-  electron.ipcRenderer.on('getCustomizeOutput', (
-    event,
-    data
-  ) => {
+  electron.ipcRenderer.on('getCustomizeOutput', (event, data) => {
     // console.log("getCustomizeOutput", data)
     customizeOutput = data
     getMonitorData()
-    timer && (clearInterval(timer))
+    timer && clearInterval(timer)
     // console.log(new Date().getMilliseconds())
     setTimeout(() => {
       timer = setInterval(() => {
@@ -152,7 +162,6 @@
   //     interval
   //   })
 
-
   //   let el = document.createElement('saki-snackbar')
   //   // console.log('state.app.status', el)
   //   // console.log(el)
@@ -171,7 +180,6 @@
   //   })
   //   document.body.appendChild(el)
   // })
-
 
   // electron.ipcRenderer.send('getData', {
   //   processName,
@@ -193,9 +201,6 @@
   //     intervalInput.setAttribute("value", data.interval)
   //   }
   // })
-
-
-
 
   // const resources = {
   //   'zh-CN': {
@@ -245,7 +250,6 @@
   //     intervalError: "The interval cannot be less than 1000ms.",
   //   },
   // }
-
 
   // const t = (parameter) => {
   //   return resources[languages][parameter]

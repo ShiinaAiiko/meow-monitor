@@ -10,33 +10,46 @@ body,
 	/* padding: 40px 60px; */
 	-webkit-app-region: drag;
 	cursor: grab;
-	display: inline-block;
 	user-select: none;
 	white-space: nowrap;
 
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
 		Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+	display: flex;
+	flex-direction: column;
 }
 .hide {
 	opacity: 0;
 }
+
 .main.left {
-	padding: 6px 100px 6px 10px;
-	text-align: left;
+	align-items: flex-start;
 }
 .main.center {
-	padding: 6px 100px 6px 100px;
-	text-align: center;
+	align-items: center;
 }
 .main.right {
-	padding: 6px 10px 6px 100px;
+	align-items: flex-end;
+}
+
+.main.left .main-text {
+	padding: 0px 100px 0px 10px;
+	text-align: left;
+}
+.main.center .main-text {
+	padding: 0px 100px 0px 100px;
+	text-align: center;
+}
+.main.right .main-text {
+	padding: 0px 10px 0px 100px;
 	text-align: right;
 }
-.main.dark {
+.main.dark .main-text {
 	color: #ffff;
 	text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
-.main.left.dark {
+.main.left.dark .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(0, 0, 0, 0.6),
@@ -48,7 +61,7 @@ body,
 		rgba(0, 0, 0, 0)
 	);
 }
-.main.center.dark {
+.main.center.dark .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(0, 0, 0, 0),
@@ -62,7 +75,7 @@ body,
 		rgba(0, 0, 0, 0)
 	);
 }
-.main.right.dark {
+.main.right.dark .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(0, 0, 0, 0),
@@ -78,7 +91,7 @@ body,
 	color: #fff;
 	text-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
-.main.left.light {
+.main.left.light .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(242, 156, 178, 0.6),
@@ -90,7 +103,7 @@ body,
 		rgba(242, 156, 178, 0)
 	);
 }
-.main.center.light {
+.main.center.light .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(242, 156, 178, 0),
@@ -104,7 +117,7 @@ body,
 		rgba(242, 156, 178, 0)
 	);
 }
-.main.right.light {
+.main.right.light .main-text {
 	background: linear-gradient(
 		90deg,
 		rgba(242, 156, 178, 0),

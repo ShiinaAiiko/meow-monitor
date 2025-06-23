@@ -36,6 +36,8 @@ export const autoLauncher = new AutoLaunch({
 	// path: '/Applications/Minecraft.app',
 })
 
+
+
 const run = () => {
 	let isQuit = false
 
