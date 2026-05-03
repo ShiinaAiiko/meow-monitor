@@ -8,7 +8,8 @@ import {
   nativeTheme,
   ipcMain,
   ipcRenderer,
-  Notification, screen
+  Notification,
+  screen,
 } from 'electron'
 import { windows, openMainWindows, createWindow } from './windows'
 import {
@@ -105,12 +106,12 @@ export const getMenu = () => {
         },
         {
           sublabel: t('left'),
-          type: "separator",
+          type: 'separator',
         },
         {
           label: t('fontSize'),
           submenu: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].map((v) => {
-            const ft = v + "px"
+            const ft = v + 'px'
             return {
               label: ft,
               checked: fontSize === ft,
@@ -120,7 +121,7 @@ export const getMenu = () => {
                 setFontSize(ft)
               },
             }
-          })
+          }),
         },
       ],
     },
@@ -285,7 +286,7 @@ export const createTaskMenu = async (type?: 'pink' | 'white') => {
   // console.log(1, iconDir)
   // console.log(
   // 	2,
-  // 	'/home/shiina_aiiko/Development/@Aiiko/ShiinaAiikoDevWorkspace/@OpenSourceProject/meow-sticky-note/client/public/favicon.ico'
+  // 	'/home/shiina_aiiko/Development/@Aiiko/ShiinaAiikoDevWorkspace/OpenSourceProject/meow-sticky-note/client/public/favicon.ico'
   // )
 
   if (!type) {
