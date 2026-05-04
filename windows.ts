@@ -28,8 +28,10 @@ export const createWindow = async (
   route: Route,
   options: BrowserWindowOPtions
 ) => {
-  let x = options?.x >= 0 ? options?.x : await systemConfig.get(route + 'x')
-  let y = options?.y >= 0 ? options?.y : await systemConfig.get(route + 'y')
+  let x =
+    Number(options?.x) >= 0 ? options?.x : await systemConfig.get(route + 'x')
+  let y =
+    Number(options?.y) >= 0 ? options?.y : await systemConfig.get(route + 'y')
   const window = new BrowserWindow({
     ...options,
     webPreferences: {
@@ -38,7 +40,9 @@ export const createWindow = async (
     },
     icon: taskIcon,
   })
-  console.log(route, options.x, options.y, x, y)
+
+  console.log('taskIcon', taskIcon)
+  // console.log(route, options.x, options.y, x, y)
 
   if (process.platform === 'darwin') {
     app.dock.setIcon(taskIcon)

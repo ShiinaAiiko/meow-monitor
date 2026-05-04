@@ -137,7 +137,7 @@ export const initRouter = () => {
         tempData: any
       }
     ) => {
-      console.log('setSize', width, height, tempData)
+      // console.log('setSize', width, height, tempData)
       let win = windows.get(route)
       win?.setResizable(true)
       win?.setSize(width, height)
