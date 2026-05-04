@@ -159,64 +159,68 @@ export const systemConfig = new NodeFsStorage<any>({
   // },
 })
 export const initConfig = async () => {
-  NodeFsStorage.baseRootDir = cacheRootDir + '/meow-monitor/u'
+  try {
+    NodeFsStorage.baseRootDir = cacheRootDir + '/meow-monitor/u'
 
-  await systemConfig.getAndSet('language', (v): any => {
-    language = v ? v : language
-    return language
-  })
-  await systemConfig.getAndSet('mode', (v) => {
-    return v ? v : 'system'
-  })
-
-  await systemConfig.getAndSet('fontSize', (v) => {
-    fontSize = v ? v : fontSize
-    return v ? v : fontSize
-  })
-
-  await systemConfig.getAndSet('alignment', (v) => {
-    alignment = v ? v : alignment
-    return v ? v : alignment
-  })
-
-  await systemConfig.getAndSet('style', (v) => {
-    style = v ? v : style
-    return v ? v : style
-  })
-
-  await systemConfig.getAndSet('dragPosition', (v) => {
-    dragPosition = v ? v : dragPosition
-    return v ? v : dragPosition
-  })
-
-  await systemConfig.getAndSet('autoStart', (v) => {
-    autoStart = v ? v : autoStart
-    return v ? v : autoStart
-  })
-
-  await systemConfig.getAndSet('customizeOutputContent', (v) => {
-    customizeOutput = v ? v : customizeOutput
-    return v ? v : customizeOutput
-  })
-
-  await systemConfig.getAndSet('monitorSize', (v) => {
-    monitorSize = v ? v : monitorSize
-    return v ? v : monitorSize
-  })
-
-  await systemConfig.getAndSet('updateSpeed', (v) => {
-    updateSpeed = v ? v : updateSpeed
-    return v ? v : updateSpeed
-  })
-
-  autoLauncher
-    .isEnabled()
-    .then((isEnabled: boolean) => {
-      setAutoStart(isEnabled ? 'open' : 'close')
+    await systemConfig.getAndSet('language', (v): any => {
+      language = v ? v : language
+      return language
     })
-    .catch((err) => {
-      console.log(err)
+    await systemConfig.getAndSet('mode', (v) => {
+      return v ? v : 'system'
     })
 
-  electronRouter(ipcMain)
+    await systemConfig.getAndSet('fontSize', (v) => {
+      fontSize = v ? v : fontSize
+      return v ? v : fontSize
+    })
+
+    await systemConfig.getAndSet('alignment', (v) => {
+      alignment = v ? v : alignment
+      return v ? v : alignment
+    })
+
+    await systemConfig.getAndSet('style', (v) => {
+      style = v ? v : style
+      return v ? v : style
+    })
+
+    await systemConfig.getAndSet('dragPosition', (v) => {
+      dragPosition = v ? v : dragPosition
+      return v ? v : dragPosition
+    })
+
+    await systemConfig.getAndSet('autoStart', (v) => {
+      autoStart = v ? v : autoStart
+      return v ? v : autoStart
+    })
+
+    await systemConfig.getAndSet('customizeOutputContent', (v) => {
+      customizeOutput = v ? v : customizeOutput
+      return v ? v : customizeOutput
+    })
+
+    await systemConfig.getAndSet('monitorSize', (v) => {
+      monitorSize = v ? v : monitorSize
+      return v ? v : monitorSize
+    })
+
+    await systemConfig.getAndSet('updateSpeed', (v) => {
+      updateSpeed = v ? v : updateSpeed
+      return v ? v : updateSpeed
+    })
+
+    autoLauncher
+      .isEnabled()
+      .then((isEnabled: boolean) => {
+        setAutoStart(isEnabled ? 'open' : 'close')
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+
+    electronRouter(ipcMain)
+  } catch (error) {
+    nyanyalog.error(error)
+  }
 }
