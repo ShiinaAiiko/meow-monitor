@@ -1,13 +1,13 @@
 {
   "name": "meow-monitor",
-  "version":"1.0.5",
+  "version": "1.0.5",
   "private": true,
   "description": "Meow Monitor",
   "main": "./dist/main.js",
   "author": "Shiina Aiiko <shiina@aiiko.club>",
   "homepage": ".",
   "scripts": {
-    "el:dev": "nodemon --exec \"electron ./dist/main.js --no-sandbox\"",
+    "el:dev": "nodemon --exec \"electron ./dist/main.js --no-sandbox --disable-gpu-sandbox\"",
     "el:tsc": "rm -rf ./dist/ && tsc --watch",
     "el:tsc-no-watch": "rm -rf ./dist/ && tsc",
     "el:build-linux-x64": "electron-builder --linux --x64",

@@ -63,7 +63,7 @@ build() {
 	mv "./el-build/meow-monitor_"$version"_amd64.deb" \
 		./el-build/$name-v$version-linux-amd64-x64.deb
 
-	cpapp
+	# cpapp
 
 	rm -rf ./el-build/*.exe.blockmap
 
