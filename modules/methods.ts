@@ -311,9 +311,11 @@ export const startHardwareCollection = (
       cpuCurrentSpeed = JSON.stringify(res)
     })
 
-    totalMem = os.totalmem()
-    freememPercentage = os.freememPercentage()
-    freeMem = os.freemem()
+    if (customizeOutput.indexOf('Mem') >= 0) {
+      totalMem = os.totalmem()
+      freememPercentage = os.freememPercentage()
+      freeMem = os.freemem()
+    }
 
     if (customizeOutput.indexOf('{NVGPU}') >= 0) {
       getNvidiaGPUUsage().then((res) => {
@@ -337,8 +339,22 @@ export const startHardwareCollection = (
       }
     }
 
+    if (customizeOutput.indexOf('{Latlng') >= 0) {
+      const latlngRegex =
+        /\{Latlng\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\]\}/i
+      const match = customizeOutput.match(latlngRegex)
+
+      if (match) {
+        curLatlng.lat = Number(match[1])
+        curLatlng.lng = Number(match[2])
+      }
+    }
     if (
+      customizeOutput.indexOf('{Latlng') >= 0 ||
       customizeOutput.indexOf('{Weather}') >= 0 ||
+      customizeOutput.indexOf('{Country}') >= 0 ||
+      customizeOutput.indexOf('{State}') >= 0 ||
+      customizeOutput.indexOf('{Region}') >= 0 ||
       customizeOutput.indexOf('{City}') >= 0 ||
       customizeOutput.indexOf('{Temperature}') >= 0 ||
       customizeOutput.indexOf('{ApparentTemperature}') >= 0 ||
@@ -397,6 +413,19 @@ export const generateMonitorData = (customizeOutput: string) => {
     customizeOutput = customizeOutput.replace(memUsedRegex, (match, unit) => {
       // 把原本的字节(Byte)转成对应的 MB
       const memInMB = totalMem - freeMem
+
+      // 判断用户传的单位，如果是 GB 就除以 1024，否则默认输出 MB
+      if (unit && unit.toUpperCase() === 'GB') {
+        return (memInMB / 1024).toFixed(1) + 'GB' // 保留一位小数，如 7.5GB
+      }
+      return Math.round(memInMB) + 'MB' // 默认 MB，如 7680MB
+    })
+  }
+  if (customizeOutput.indexOf('{MemFree') >= 0) {
+    const memFreeRegex = /\{MemFree(?:\[(GB|MB)\])?\}/gi
+    customizeOutput = customizeOutput.replace(memFreeRegex, (match, unit) => {
+      // 把原本的字节(Byte)转成对应的 MB
+      const memInMB = freeMem
 
       // 判断用户传的单位，如果是 GB 就除以 1024，否则默认输出 MB
       if (unit && unit.toUpperCase() === 'GB') {
@@ -544,12 +573,27 @@ export const generateMonitorData = (customizeOutput: string) => {
     // }
   }
 
+  if (customizeOutput.indexOf('{Latlng') >= 0) {
+    const latlngRegex =
+      /\{Latlng\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\]\}/gi
+
+    customizeOutput = customizeOutput.replace(latlngRegex, '')
+  }
   if (customizeOutput.indexOf('{WeatherEmoji}') >= 0) {
     const emoji = openWeatherWMOToEmoji(Number(cityIpInfo.weatherCode))
     customizeOutput = customizeOutput.replace('{WeatherEmoji}', emoji.value)
   }
   if (customizeOutput.indexOf('{Weather}') >= 0) {
     customizeOutput = customizeOutput.replace('{Weather}', cityIpInfo.weather)
+  }
+  if (customizeOutput.indexOf('{Country}') >= 0) {
+    customizeOutput = customizeOutput.replace('{Country}', cityIpInfo.country)
+  }
+  if (customizeOutput.indexOf('{State}') >= 0) {
+    customizeOutput = customizeOutput.replace('{State}', cityIpInfo.state)
+  }
+  if (customizeOutput.indexOf('{Region}') >= 0) {
+    customizeOutput = customizeOutput.replace('{Region}', cityIpInfo.regionName)
   }
   if (customizeOutput.indexOf('{City}') >= 0) {
     customizeOutput = customizeOutput.replace('{City}', cityIpInfo.city)
@@ -627,6 +671,11 @@ import { Debounce } from '@nyanyajs/utils'
 //   })
 // )
 
+let curLatlng = {
+  lat: 0,
+  lng: 0,
+}
+
 let cityIpInfo = {
   ipv4: '',
   ipv6: '',
@@ -645,12 +694,34 @@ let cityIpInfo = {
   apparentTemperature: -273.15,
   windSpeed: 0,
   windDirection: '',
+  state: '',
 }
 
 // import { translate } from '@vitalets/google-translate-api';
 
 export const getCity = async () => {
   // https://tools.aiiko.club/api/v1/ip/details?ip=&language=en-US
+
+  if (curLatlng.lat && curLatlng.lng) {
+    const res = await R.request({
+      method: 'GET',
+      url: `https://tools.aiiko.club/api/v1/geocode/regeo?latitude=${curLatlng.lat || cityIpInfo.lat}&longitude=${curLatlng.lng || cityIpInfo.lon}&platform=Amap`,
+    })
+    // log.info(res.data)
+    if (res.data?.code === 200 && res.data?.data?.address) {
+      const data = res.data.data
+      cityIpInfo = {
+        ...cityIpInfo,
+        country: data.country,
+        state: data.state,
+        regionName: data.region,
+        city: data.city,
+        lon: curLatlng.lng,
+        lat: curLatlng.lat,
+      }
+    }
+    return
+  }
 
   const res = await R.request({
     method: 'GET',
@@ -680,13 +751,13 @@ export const getCity = async () => {
 }
 
 export const getWeather = async () => {
-  if (!cityIpInfo.lat) {
+  if (!cityIpInfo.city) {
     await getCity()
   }
 
   const res = await R.request({
     method: 'GET',
-    url: `https://api.open-meteo.com/v1/forecast?latitude=${cityIpInfo.lat}&longitude=${cityIpInfo.lon}&current=${[
+    url: `https://api.open-meteo.com/v1/forecast?latitude=${curLatlng.lat || cityIpInfo.lat}&longitude=${curLatlng.lng || cityIpInfo.lon}&current=${[
       'temperature_2m',
       'weather_code',
       'relative_humidity_2m',

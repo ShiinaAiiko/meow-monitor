@@ -94,6 +94,7 @@
       cpuSD: '平均CPU使用率',
       memUsageSD: '内存使用率',
       memUsedSD: '内存使用量，自定义单位请使用：{MemUsed[GB]} 或 {MemUsed[MB]}',
+      memFreeSD: '内存空闲量，自定义单位请使用：{MemFree[GB]} 或 {MemFree[MB]}',
       memTotalSD:
         '内存总量，自定义单位请使用：{MemTotal[GB]} 或 {MemTotal[MB]}',
       nvgpuSD: 'NVIDIA GPU 使用率',
@@ -119,7 +120,12 @@
       humidity: '湿度',
       windSpeed: '风速',
       windDirection: '风向',
+      country: '国家',
+      state: '州/省',
+      region: '地区',
       city: '城市',
+      latlng:
+        '自定义经纬度，格式为{Latlng[lat,lng]}，例如{Latlng[39.9042,116.4074]}',
     },
     'zh-TW': {
       appName: '喵視器',
@@ -141,6 +147,7 @@
       cpuSD: '平均CPU使用率',
       memUsageSD: '記憶體使用率',
       memUsedSD: '記憶體使用量，自訂單位請使用：{MemUsed[GB]} 或 {MemUsed[MB]}',
+      memFreeSD: '記憶體空閒量，自訂單位請使用：{MemFree[GB]} 或 {MemFree[MB]}',
       memTotalSD:
         '記憶體總量，自訂單位請使用：{MemTotal[GB]} 或 {MemTotal[MB]}',
       nvgpuSD: 'NVIDIA GPU 使用率',
@@ -166,7 +173,12 @@
       humidity: '濕度',
       windSpeed: '風速',
       windDirection: '風向',
+      country: '國家',
+      state: '州/省',
+      region: '地區',
       city: '城市',
+      latlng:
+        '自訂經緯度，格式為 {Latlng[lat,lng]}，例如 {Latlng[39.9042,116.4074]}',
     },
     'en-US': {
       appName: 'Meow Monitor',
@@ -190,6 +202,8 @@
       memUsageSD: 'Memory Usage (%)',
       memUsedSD:
         'Memory used. To customize the unit, please use: {MemUsed[GB]} or {MemUsed[MB]}',
+      memFreeSD:
+        'Memory free. To customize the unit, please use: {MemFree[GB]} or {MemFree[MB]}',
       memTotalSD:
         'Total memory. To customize the unit, please use: {MemTotal[GB]} or {MemTotal[MB]}',
       nvgpuSD: 'Nvidia gpu utiliztion',
@@ -215,7 +229,12 @@
       humidity: 'Humidity',
       windSpeed: 'Wind speed',
       windDirection: 'Wind direction',
+      country: 'Country',
+      state: 'State',
+      region: 'Region',
       city: 'City',
+      latlng:
+        'Custom latitude and longitude. Format: {Latlng[lat,lng]}, for example: {Latlng[39.9042,116.4074]}',
     },
   }
 
@@ -344,6 +363,10 @@
         description: t('memUsedSD'),
       },
       {
+        keyword: 'MemFree',
+        description: t('memFreeSD'),
+      },
+      {
         keyword: 'MemTotal',
         description: t('memTotalSD'),
       },
@@ -424,6 +447,22 @@
       {
         keyword: 'WindDirection',
         description: t('windDirection'),
+      },
+      {
+        keyword: 'Latlng',
+        description: t('latlng'),
+      },
+      {
+        keyword: 'Country',
+        description: t('country'),
+      },
+      {
+        keyword: 'State',
+        description: t('state'),
+      },
+      {
+        keyword: 'Region',
+        description: t('region'),
       },
       {
         keyword: 'City',

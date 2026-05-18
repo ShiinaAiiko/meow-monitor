@@ -2,7 +2,7 @@
 name="meow-monitor"
 port=16111
 DIR=$(cd $(dirname $0) && pwd)
-version="1.0.6"
+version="1.0.7"
 
 allowMethods=("deb:install push delete build saki-ui")
 
@@ -47,7 +47,7 @@ build() {
 		-v ~/.cache/electron-builder:/root/.cache/electron-builder \
 		electronuserland/builder:wine \
 		/bin/bash -c "cd /project && yarn el:build-win-x64 \
-    && yarn el:build-linux-x64"
+	&& yarn el:build-linux-x64"
 
 	# yarn el:build-win-x64
 
