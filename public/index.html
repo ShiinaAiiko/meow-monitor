@@ -92,6 +92,7 @@
       timeSD: '当前时间，自定义时间格式时，请使用以下语法：{Time[YYYY.MM.DD]}',
       bootTimeSD: '系统正常运行时间',
       cpuSD: '平均CPU使用率',
+      cpuCurrentSpeedSD: 'CPU当前频率',
       memUsageSD: '内存使用率',
       memUsedSD: '内存使用量，自定义单位请使用：{MemUsed[GB]} 或 {MemUsed[MB]}',
       memFreeSD: '内存空闲量，自定义单位请使用：{MemFree[GB]} 或 {MemFree[MB]}',
@@ -145,6 +146,7 @@
       timeSD: '當前時間，自訂時間格式時，請使用以下語法：{Time[YYYY.MM.DD]}',
       bootTimeSD: '系統正常運行時間',
       cpuSD: '平均CPU使用率',
+      cpuCurrentSpeedSD: 'CPU当前频率',
       memUsageSD: '記憶體使用率',
       memUsedSD: '記憶體使用量，自訂單位請使用：{MemUsed[GB]} 或 {MemUsed[MB]}',
       memFreeSD: '記憶體空閒量，自訂單位請使用：{MemFree[GB]} 或 {MemFree[MB]}',
@@ -199,6 +201,7 @@
         'Current time. To customize the time format, please use the following syntax: {Time[YYYY.MM.DD]}}',
       bootTimeSD: 'System uptime',
       cpuSD: 'Average CPU usage',
+      cpuCurrentSpeedSD: 'Current CPU speed',
       memUsageSD: 'Memory Usage (%)',
       memUsedSD:
         'Memory used. To customize the unit, please use: {MemUsed[GB]} or {MemUsed[MB]}',
@@ -353,6 +356,10 @@
       {
         keyword: 'CPU',
         description: t('cpuSD'),
+      },
+      {
+        keyword: 'CPUCurrentSpeed',
+        description: t('cpuCurrentSpeedSD'),
       },
       {
         keyword: 'MemUsage',

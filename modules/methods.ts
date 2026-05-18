@@ -268,7 +268,7 @@ let networkSpeed = {
 let batteryPercent = '00%'
 let batteryCycleCount = 0
 let cpuTemp = '---'
-let cpuCurrentSpeed = '---'
+let cpuCurrentSpeed = 0
 
 let uptime = {
   d: 0,
@@ -292,24 +292,27 @@ export const startHardwareCollection = (
   let interval = updateSpeed === 'high' ? 1 : updateSpeed === 'normal' ? 2 : 5
 
   const init = async () => {
-    getCPUUsage().then((res) => {
-      res = res * 100
-      cpuUsage =
-        String(
-          res >= 100
-            ? 100
-            : res <= 0.99
-              ? String(Math.round(res)).padStart(2, '0')
-              : String(Math.floor(res)).padStart(2, '0')
-        ) + '%'
-    })
-
-    si.cpuTemperature().then((res) => {
-      cpuTemp = JSON.stringify(res)
-    })
-    si.cpuCurrentSpeed().then((res) => {
-      cpuCurrentSpeed = JSON.stringify(res)
-    })
+    if (customizeOutput.indexOf('CPU') >= 0) {
+      getCPUUsage().then((res) => {
+        res = res * 100
+        cpuUsage =
+          String(
+            res >= 100
+              ? 100
+              : res <= 0.99
+                ? String(Math.round(res)).padStart(2, '0')
+                : String(Math.floor(res)).padStart(2, '0')
+          ) + '%'
+      })
+      si.cpuTemperature().then((res) => {
+        cpuTemp = JSON.stringify(res)
+      })
+      if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
+        updateCpuRealtimeSpeed().then((res) => {
+          cpuCurrentSpeed = res
+        })
+      }
+    }
 
     if (customizeOutput.indexOf('Mem') >= 0) {
       totalMem = os.totalmem()
@@ -554,7 +557,7 @@ export const generateMonitorData = (customizeOutput: string) => {
   if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{CPUCurrentSpeed}',
-      cpuCurrentSpeed
+      (cpuCurrentSpeed / 1000).toFixed(2) + 'GHz'
     )
   }
   if (customizeOutput.indexOf('{BootTime}') >= 0) {
@@ -815,4 +818,73 @@ export const getWeather = async () => {
   if (wd === -1) {
     cityIpInfo.windDirection = t('windDirection10')
   }
+}
+
+// 声明一个全局分母变量，默认 2.50
+let globalCpuBaseSpeed = 0
+let isSpeedChasing = false // 实时采样锁
+
+/**
+ * 【异步函数 1】获取并更新 CPU 基准主频分母
+ * @returns {Promise<number>} 返回纯数字基准主频（单位 GHz，如 2.5）
+ */
+export const initCpuBaseSpeed = (): Promise<number> => {
+  return new Promise((resolve) => {
+    const cmd = `powershell -Command "(Get-CimInstance Win32_Processor).MaxClockSpeed"`
+
+    exec(cmd, (err, stdout) => {
+      if (err || !stdout) {
+        return resolve(globalCpuBaseSpeed) // 失败时返回默认值
+      }
+      try {
+        const maxClockSpeedMHz = parseFloat(stdout.trim())
+        if (!isNaN(maxClockSpeedMHz) && maxClockSpeedMHz > 0) {
+          // 2500 MHz / 1000 = 2.5
+          globalCpuBaseSpeed = maxClockSpeedMHz
+        }
+      } catch (e) {
+        // 容错
+      }
+      resolve(globalCpuBaseSpeed)
+    })
+  })
+}
+
+/**
+ * 【异步函数 2】获取当前实时的睿频数值
+ * @returns {Promise<number>} 返回当前纯数字实时主频（单位 GHz，如 3.5123...）
+ */
+export const updateCpuRealtimeSpeed = async (): Promise<number> => {
+  if (!globalCpuBaseSpeed) {
+    await initCpuBaseSpeed()
+  }
+  return new Promise((resolve) => {
+    // 防抖锁：如果上一次的 exec 还没执行完，直接返回上一次算好的分母（或者基准值），防止高频调用卡死
+    if (isSpeedChasing) {
+      return resolve(cpuCurrentSpeed)
+    }
+    isSpeedChasing = true
+
+    const cmd = `powershell -Command "(Get-Counter -Counter '\\Processor Information(_Total)\\% Processor Performance' -ErrorAction SilentlyContinue).CounterSamples.CookedValue"`
+
+    exec(cmd, (err, stdout) => {
+      isSpeedChasing = false // 释放锁
+
+      if (err || !stdout) {
+        return resolve(cpuCurrentSpeed) // 异常时兜底返回基准频率
+      }
+
+      try {
+        const percent = parseFloat(stdout.trim())
+        if (!isNaN(percent) && percent > 0) {
+          // 核心公式计算：2.5 * (129.45 / 100) = 3.23625
+          const realSpeed = globalCpuBaseSpeed * (percent / 100)
+          return resolve(realSpeed) // 抛出纯数字，不带任何加码和小数点截断
+        }
+      } catch (e) {
+        // 容错
+      }
+      resolve(cpuCurrentSpeed)
+    })
+  })
 }
