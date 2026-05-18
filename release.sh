@@ -2,7 +2,7 @@
 name="meow-monitor"
 port=16111
 DIR=$(cd $(dirname $0) && pwd)
-version="1.0.5"
+version="1.0.6"
 
 allowMethods=("deb:install push delete build saki-ui")
 

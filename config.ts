@@ -10,12 +10,20 @@ import { NodeFsStorage, electronRouter } from '@nyanyajs/utils/dist/node'
 import path from 'path'
 import isDev from 'electron-is-dev'
 import * as nyanyalog from 'nyanyajs-log'
-import { getCity, getWeather, start } from './modules/methods'
+import {
+  getCity,
+  getWeather,
+  start,
+  startHardwareCollection,
+} from './modules/methods'
 import { appTray, getMenu } from './taskMenu'
 import { t } from './modules/languages'
 import { windows } from './windows'
 import { autoLauncher } from './main'
 import { NRequest } from '@nyanyajs/utils'
+import moment from 'moment'
+require('moment/locale/zh-cn') // 简体中文
+require('moment/locale/zh-tw') // 繁体中文
 
 nyanyalog.config({
   format: {
@@ -45,10 +53,12 @@ export let monitorSize = {
   w: 700,
   h: 30,
 }
-export let updateSpeed = 'normal'
+export let updateSpeed: 'high' | 'normal' | 'low' = 'normal'
 
 export const setLanguage = async (lang: string) => {
   language = lang
+
+  moment.locale(language.toLowerCase())
 
   await systemConfig.set('language', language)
   await getCity()
@@ -96,6 +106,7 @@ export const setMonitorSize = async (a: typeof monitorSize) => {
 }
 export const setUpdateSpeed = async (a: typeof updateSpeed) => {
   updateSpeed = a
+  startHardwareCollection(updateSpeed)
   await systemConfig.set('updateSpeed', updateSpeed)
 }
 
@@ -164,6 +175,7 @@ export const initConfig = async () => {
 
     await systemConfig.getAndSet('language', (v): any => {
       language = v ? v : language
+      moment.locale(language.toLowerCase())
       return language
     })
     await systemConfig.getAndSet('mode', (v) => {
@@ -207,6 +219,7 @@ export const initConfig = async () => {
 
     await systemConfig.getAndSet('updateSpeed', (v) => {
       updateSpeed = v ? v : updateSpeed
+      startHardwareCollection(updateSpeed)
       return v ? v : updateSpeed
     })
 

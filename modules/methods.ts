@@ -24,7 +24,8 @@ import {
   updateSpeed,
   log,
   R,
-  language
+  language,
+  customizeOutput,
 } from '../config'
 
 const mkdirsSync = (dirname: string) => {
@@ -125,7 +126,7 @@ const getNvidiaGPUUsage = () => {
         a.some((v) => {
           if (v.indexOf('MiB') >= 0) {
             const tempIndex = v.indexOf('C ')
-            temperature = v.substring(tempIndex - 4, tempIndex).trim() + 'C'
+            temperature = v.substring(tempIndex - 4, tempIndex).trim() + '℃'
 
             const powerIndex = v.indexOf('W ')
 
@@ -276,22 +277,103 @@ let uptime = {
   s: 0,
 }
 
-import { openWeatherWMOToEmoji } from '@akaguny/open-meteo-wmo-to-emoji';
+import { openWeatherWMOToEmoji } from '@akaguny/open-meteo-wmo-to-emoji'
+
+// 专门在后台跑的采集器，确保同一时间只有一个底层命令在执行
+
+let timer2: NodeJS.Timeout
+export const startHardwareCollection = (
+  updateSpeed: 'high' | 'normal' | 'low'
+) => {
+  clearInterval(timer2)
+
+  const intervalMap = { high: 1000, normal: 2000, low: 5000 }
+  const delay = intervalMap[updateSpeed] || 2000
+  let interval = updateSpeed === 'high' ? 1 : updateSpeed === 'normal' ? 2 : 5
+
+  const init = async () => {
+    getCPUUsage().then((res) => {
+      res = res * 100
+      cpuUsage =
+        String(
+          res >= 100
+            ? 100
+            : res <= 0.99
+              ? String(Math.round(res)).padStart(2, '0')
+              : String(Math.floor(res)).padStart(2, '0')
+        ) + '%'
+    })
+
+    si.cpuTemperature().then((res) => {
+      cpuTemp = JSON.stringify(res)
+    })
+    si.cpuCurrentSpeed().then((res) => {
+      cpuCurrentSpeed = JSON.stringify(res)
+    })
+
+    totalMem = os.totalmem()
+    freememPercentage = os.freememPercentage()
+    freeMem = os.freemem()
+
+    if (customizeOutput.indexOf('{NVGPU}') >= 0) {
+      getNvidiaGPUUsage().then((res) => {
+        nvgpuUsage = res
+      })
+    }
+
+    if (count % (interval * 3 > 10 ? 10 : interval * 3) === 0 || count === 1) {
+      getNetworkSpeed().then((res) => {
+        // console.log('networkSpeed', networkSpeed)
+        networkSpeed = res
+      })
+    }
+
+    if (customizeOutput.indexOf('Battery') >= 0) {
+      if (count % 60 === 0 || count === 1) {
+        si.battery().then((res) => {
+          batteryCycleCount = res.cycleCount
+          batteryPercent = String(String(res.percent) + '%').padStart(3, '0')
+        })
+      }
+    }
+
+    if (
+      customizeOutput.indexOf('{Weather}') >= 0 ||
+      customizeOutput.indexOf('{City}') >= 0 ||
+      customizeOutput.indexOf('{Temperature}') >= 0 ||
+      customizeOutput.indexOf('{ApparentTemperature}') >= 0 ||
+      customizeOutput.indexOf('{WindSpeed}') >= 0 ||
+      customizeOutput.indexOf('{WindDirection}') >= 0 ||
+      customizeOutput.indexOf('{Humidity}') >= 0
+    ) {
+      if (count % 30 === 0 || count === 1) {
+        getWeather()
+      }
+      if (count % 150 === 0) {
+        getCity()
+      }
+    }
+  }
+  init()
+  timer2 = setInterval(init, delay)
+}
 
 export const generateMonitorData = (customizeOutput: string) => {
   let interval = updateSpeed === 'high' ? 1 : updateSpeed === 'normal' ? 2 : 5
 
-  // console.log('customizeOutput', customizeOutput)
   count++
+  // console.log('customizeOutput', customizeOutput)
 
+  customizeOutput = customizeOutput.replace(/&nbsp;?/g, ' ')
 
-  customizeOutput = customizeOutput.replace(/\s+/g, '&nbsp')
-  if (customizeOutput.indexOf('{Time}') >= 0) {
-    customizeOutput = customizeOutput.replace(
-      '{Time}',
-      moment().format('YYYY-MM-DD HH:mm:ss')
-    )
-  }
+  customizeOutput = customizeOutput.replace(
+    /\{Time(?:\[([^\]]+)\])?\}/gi,
+    (match, formatStr) => {
+      const finalFormat = formatStr ? formatStr : 'YYYY-MM-DD HH:mm:ss'
+      return moment().locale(language.toLowerCase()).format(finalFormat)
+    }
+  )
+
   if (customizeOutput.indexOf('{CPU}') >= 0) {
     // console.log(count, count % 3 === 0)
     // console.log(cpuUsage)
@@ -299,41 +381,49 @@ export const generateMonitorData = (customizeOutput: string) => {
       '{CPU}',
       cpuUsage.padStart(placeholderLength, placeholder)
     )
-    if (count % interval === 0 || count === 1) {
-      getCPUUsage().then((res) => {
-        res = res * 100
-        cpuUsage =
-          String(
-            res >= 100
-              ? 100
-              : res <= 0.99
-                ? String(Math.round(res)).padStart(2, '0')
-                : String(Math.floor(res)).padStart(2, '0')
-          ) + '%'
-      })
-    }
   }
-  if (customizeOutput.indexOf('{Mem}') >= 0) {
+  if (customizeOutput.indexOf('{MemUsage}') >= 0) {
     // console.log(count, count % 3 === 0)
     customizeOutput = customizeOutput.replace(
-      '{Mem}',
+      '{MemUsage}',
       (String(Math.round((1 - freememPercentage) * 100)) + '%').padStart(
         placeholderLength,
         placeholder
       )
     )
-    if (count % interval === 0) {
-      totalMem = os.totalmem()
-      freememPercentage = os.freememPercentage()
-      freeMem = os.freemem()
-    }
+  }
+  if (customizeOutput.indexOf('{MemUsed') >= 0) {
+    const memUsedRegex = /\{MemUsed(?:\[(GB|MB)\])?\}/gi
+    customizeOutput = customizeOutput.replace(memUsedRegex, (match, unit) => {
+      // 把原本的字节(Byte)转成对应的 MB
+      const memInMB = totalMem - freeMem
+
+      // 判断用户传的单位，如果是 GB 就除以 1024，否则默认输出 MB
+      if (unit && unit.toUpperCase() === 'GB') {
+        return (memInMB / 1024).toFixed(1) + 'GB' // 保留一位小数，如 7.5GB
+      }
+      return Math.round(memInMB) + 'MB' // 默认 MB，如 7680MB
+    })
+  }
+  if (customizeOutput.indexOf('{MemTotal') >= 0) {
+    const memTotalRegex = /\{MemTotal(?:\[(GB|MB)\])?\}/gi
+    customizeOutput = customizeOutput.replace(memTotalRegex, (match, unit) => {
+      // 把原本的字节(Byte)转成对应的 MB
+      const totalInMB = totalMem
+
+      if (unit && unit.toUpperCase() === 'GB') {
+        return (totalInMB / 1024).toFixed(1) + 'GB' // 总内存一般是整数，如 16GB
+      }
+      return Math.round(totalInMB) + 'MB'
+    })
   }
   if (customizeOutput.indexOf('{NVGPU}') >= 0) {
-    if (count % interval === 0 || count === 1) {
-      getNvidiaGPUUsage().then((res) => {
-        nvgpuUsage = res
-      })
-    }
+    customizeOutput = customizeOutput.replace(
+      '{NVGPU}',
+      nvgpuUsage.utilization
+        ? String(nvgpuUsage.utilization).padStart(3, '0')
+        : '00%'
+    )
   }
 
   if (customizeOutput.indexOf('{NVGPUTemp}') >= 0) {
@@ -356,11 +446,11 @@ export const generateMonitorData = (customizeOutput: string) => {
       String(
         nvgpuUsage.videoMemory.used
           ? String(
-            Math.floor(
-              (nvgpuUsage.videoMemory.used / nvgpuUsage.videoMemory.total) *
-              100
-            )
-          ) + '%'
+              Math.floor(
+                (nvgpuUsage.videoMemory.used / nvgpuUsage.videoMemory.total) *
+                  100
+              )
+            ) + '%'
           : '0%'
       ).padStart(3, '0')
     )
@@ -387,25 +477,10 @@ export const generateMonitorData = (customizeOutput: string) => {
     )
   }
 
-  if (customizeOutput.indexOf('{NVGPU}') >= 0) {
-    customizeOutput = customizeOutput.replace(
-      '{NVGPU}',
-      nvgpuUsage.utilization
-        ? String(nvgpuUsage.utilization).padStart(3, '0')
-        : '00%'
-    )
-  }
-
   if (customizeOutput.indexOf('{Network') >= 0) {
     if (count % interval === 0 || count === 1) {
       networkSpeed.download += Math.random() * 10 - 5
       networkSpeed.upload += Math.random() * 10 - 5
-    }
-    if (count % (interval * 3 > 10 ? 10 : interval * 3) === 0 || count === 1) {
-      getNetworkSpeed().then((res) => {
-        // console.log('networkSpeed', networkSpeed)
-        networkSpeed = res
-      })
     }
   }
   if (customizeOutput.indexOf('{NetworkSpeed}') >= 0) {
@@ -429,15 +504,6 @@ export const generateMonitorData = (customizeOutput: string) => {
     )
   }
 
-  if (customizeOutput.indexOf('{Battery') >= 0) {
-    if (count % 60 === 0 || count === 1) {
-      si.battery().then((res) => {
-        batteryCycleCount = res.cycleCount
-        batteryPercent = String(String(res.percent) + '%').padStart(3, '0')
-      })
-    }
-  }
-
   if (customizeOutput.indexOf('{BatteryPercent}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{BatteryPercent}',
@@ -455,33 +521,12 @@ export const generateMonitorData = (customizeOutput: string) => {
 
   if (customizeOutput.indexOf('{CPUTemp}') >= 0) {
     customizeOutput = customizeOutput.replace('{CPUTemp}', cpuTemp)
-    if (count % interval === 0) {
-      si.cpuTemperature().then((res) => {
-        cpuTemp = JSON.stringify(res)
-      })
-    }
   }
   if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{CPUCurrentSpeed}',
       cpuCurrentSpeed
     )
-    if (count % interval === 0) {
-      si.cpuCurrentSpeed().then((res) => {
-        cpuCurrentSpeed = JSON.stringify(res)
-      })
-    }
-  }
-  if (customizeOutput.indexOf('{CPUCurrentSpeed}') >= 0) {
-    customizeOutput = customizeOutput.replace(
-      '{CPUCurrentSpeed}',
-      cpuCurrentSpeed
-    )
-    if (count % interval === 0) {
-      si.cpuCurrentSpeed().then((res) => {
-        cpuCurrentSpeed = JSON.stringify(res)
-      })
-    }
   }
   if (customizeOutput.indexOf('{BootTime}') >= 0) {
     const ot = oss.uptime()
@@ -499,73 +544,44 @@ export const generateMonitorData = (customizeOutput: string) => {
     // }
   }
 
-
-
-
-  if (customizeOutput.indexOf('{Weather}') >= 0 ||
-    customizeOutput.indexOf('{City}') >= 0 ||
-    customizeOutput.indexOf('{Temperature}') >= 0 ||
-    customizeOutput.indexOf('{ApparentTemperature}') >= 0 ||
-    customizeOutput.indexOf('{WindSpeed}') >= 0 ||
-    customizeOutput.indexOf('{WindDirection}') >= 0 ||
-    customizeOutput.indexOf('{Humidity}') >= 0) {
-
-    if (count % 30 === 0 || count === 1) {
-      getWeather()
-    }
-    if (count % 150 === 0) {
-      getCity()
-    }
-  }
-
-
-
   if (customizeOutput.indexOf('{WeatherEmoji}') >= 0) {
     const emoji = openWeatherWMOToEmoji(Number(cityIpInfo.weatherCode))
-    customizeOutput = customizeOutput.replace(
-      '{WeatherEmoji}',
-      emoji.value
-    )
+    customizeOutput = customizeOutput.replace('{WeatherEmoji}', emoji.value)
   }
   if (customizeOutput.indexOf('{Weather}') >= 0) {
-    customizeOutput = customizeOutput.replace(
-      '{Weather}', (cityIpInfo.weather)
-    )
+    customizeOutput = customizeOutput.replace('{Weather}', cityIpInfo.weather)
   }
   if (customizeOutput.indexOf('{City}') >= 0) {
-    customizeOutput = customizeOutput.replace(
-      '{City}',
-      (cityIpInfo.city)
-    )
+    customizeOutput = customizeOutput.replace('{City}', cityIpInfo.city)
   }
   if (customizeOutput.indexOf('{Temperature}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{Temperature}',
-      String(cityIpInfo.temperature) + "℃"
+      String(cityIpInfo.temperature) + '℃'
     )
   }
   if (customizeOutput.indexOf('{ApparentTemperature}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{ApparentTemperature}',
-      String(cityIpInfo.apparentTemperature) + "℃"
+      String(cityIpInfo.apparentTemperature) + '℃'
     )
   }
   if (customizeOutput.indexOf('{WindSpeed}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{WindSpeed}',
-      String(cityIpInfo.windSpeed) + "km/h"
+      String(cityIpInfo.windSpeed) + 'km/h'
     )
   }
   if (customizeOutput.indexOf('{WindDirection}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{WindDirection}',
-      (cityIpInfo.windDirection)
+      cityIpInfo.windDirection
     )
   }
   if (customizeOutput.indexOf('{Humidity}') >= 0) {
     customizeOutput = customizeOutput.replace(
       '{Humidity}',
-      String(cityIpInfo.humidity) + "%"
+      String(cityIpInfo.humidity) + '%'
     )
   }
   if (customizeOutput.indexOf('{Top}') >= 0) {
@@ -574,7 +590,7 @@ export const generateMonitorData = (customizeOutput: string) => {
       String(windows.get('/monitor.html').isAlwaysOnTop())
     )
   }
-  return customizeOutput
+  return customizeOutput.replace(/ /g, '&nbsp;')
 }
 
 export const reloadMonitor = () => {
@@ -611,25 +627,24 @@ import { Debounce } from '@nyanyajs/utils'
 //   })
 // )
 
-
 let cityIpInfo = {
-  ipv4: "",
-  ipv6: "",
-  country: "",
-  regionName: "",
-  city: "",
+  ipv4: '',
+  ipv6: '',
+  country: '',
+  regionName: '',
+  city: '',
   lon: 0,
   lat: 0,
-  timezone: "",
-  isp: "",
-  org: "",
+  timezone: '',
+  isp: '',
+  org: '',
   temperature: -273.15,
   humidity: 0,
-  weatherCode: "",
-  weather: "",
+  weatherCode: '',
+  weather: '',
   apparentTemperature: -273.15,
   windSpeed: 0,
-  windDirection: ""
+  windDirection: '',
 }
 
 // import { translate } from '@vitalets/google-translate-api';
@@ -637,10 +652,9 @@ let cityIpInfo = {
 export const getCity = async () => {
   // https://tools.aiiko.club/api/v1/ip/details?ip=&language=en-US
 
-
   const res = await R.request({
-    method: "GET",
-    url: `https://tools.aiiko.club/api/v1/ip/details?ip=&language=${language.indexOf("zh") >= 0 ? "zh-CN" : language}`
+    method: 'GET',
+    url: `https://tools.aiiko.club/api/v1/ip/details?ip=&language=${language.indexOf('zh') >= 0 ? 'zh-CN' : language}`,
   })
   // log.info(res.data)
   if (res.data.code === 200 && res.data.data?.lat) {
@@ -665,24 +679,23 @@ export const getCity = async () => {
   }
 }
 
-
 export const getWeather = async () => {
   if (!cityIpInfo.lat) {
     await getCity()
   }
 
-
-
   const res = await R.request({
-    method: "GET",
-    url:
-      `https://api.open-meteo.com/v1/forecast?latitude=${cityIpInfo.lat}&longitude=${cityIpInfo.lon}&current=${[
-        "temperature_2m", "weather_code",
-        "relative_humidity_2m", "wind_speed_10m",
-        "apparent_temperature", "dew_point_2m",
-        "wind_speed_10m", "wind_direction_10m",
-      ].join(",")
-      }`
+    method: 'GET',
+    url: `https://api.open-meteo.com/v1/forecast?latitude=${cityIpInfo.lat}&longitude=${cityIpInfo.lon}&current=${[
+      'temperature_2m',
+      'weather_code',
+      'relative_humidity_2m',
+      'wind_speed_10m',
+      'apparent_temperature',
+      'dew_point_2m',
+      'wind_speed_10m',
+      'wind_direction_10m',
+    ].join(',')}`,
   })
   const data = res?.data as any
   if (!data) return
@@ -693,43 +706,42 @@ export const getWeather = async () => {
     windSpeed: data?.current?.wind_speed_10m || 0,
     windDirection: data?.current?.wind_direction_10m || 0,
     humidity: data?.current?.relative_humidity_2m || 0,
-    weatherCode: data?.current?.weather_code || "",
+    weatherCode: data?.current?.weather_code || '',
 
-    weather: t(("weather" + (data?.current?.weather_code || 0)) as any)
+    weather: t(('weather' + (data?.current?.weather_code || 0)) as any),
   }
   log.info(cityIpInfo.temperature)
 
   const wd = data?.current?.wind_direction_10m || 0
 
-
   if (wd >= 337.5 || wd < 22.5) {
-    cityIpInfo.windDirection = t("windDirection1")
+    cityIpInfo.windDirection = t('windDirection1')
   }
   if (wd >= 22.5 && wd < 67.5) {
-    cityIpInfo.windDirection = t("windDirection2")
+    cityIpInfo.windDirection = t('windDirection2')
   }
   if (wd >= 67.5 && wd < 112.5) {
-    cityIpInfo.windDirection = t("windDirection3")
+    cityIpInfo.windDirection = t('windDirection3')
   }
   if (wd >= 112.5 && wd < 157.5) {
-    cityIpInfo.windDirection = t("windDirection4")
+    cityIpInfo.windDirection = t('windDirection4')
   }
   if (wd >= 157.5 && wd < 202.5) {
-    cityIpInfo.windDirection = t("windDirection5")
+    cityIpInfo.windDirection = t('windDirection5')
   }
   if (wd >= 202.5 && wd < 247.5) {
-    cityIpInfo.windDirection = t("windDirection6")
+    cityIpInfo.windDirection = t('windDirection6')
   }
   if (wd >= 247.5 && wd < 292.5) {
-    cityIpInfo.windDirection = t("windDirection7")
+    cityIpInfo.windDirection = t('windDirection7')
   }
   if (wd >= 292.5 && wd < 337.5) {
-    cityIpInfo.windDirection = t("windDirection8")
+    cityIpInfo.windDirection = t('windDirection8')
   }
   if (wd === -999) {
-    cityIpInfo.windDirection = t("windDirection9")
+    cityIpInfo.windDirection = t('windDirection9')
   }
   if (wd === -1) {
-    cityIpInfo.windDirection = t("windDirection10")
+    cityIpInfo.windDirection = t('windDirection10')
   }
 }

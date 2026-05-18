@@ -1,39 +1,39 @@
 body {
-	--table-height: 30px;
-	overflow: hidden;
+  --table-height: 30px;
+  overflow: hidden;
 }
 .main {
-	padding: 40px 40px;
-	width: 100%;
-	height: 650px;
-	margin: 0 auto;
-	overflow-x: hidden;
-	overflow-y: auto;
+  padding: 40px 40px;
+  width: 100%;
+  height: 650px;
+  margin: 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 saki-input {
 }
 
 .m-item {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .m-buttons {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .m-input-tip {
-	color: #999;
-	font-size: 12px;
-	margin: 4px 0px;
+  color: #999;
+  font-size: 12px;
+  margin: 4px 0px;
 }
 
 .m-sensor {
-	margin: 0 0 20px 0;
+  margin: 0 0 20px 0;
 }
 
 .m-s-title {
-	font-size: 12px;
-	color: #f29cb2;
+  font-size: 12px;
+  color: #f29cb2;
 }
 /* .m-s-title.sensor {
 } */
@@ -42,69 +42,74 @@ saki-input {
 }
 
 .m-s-l-header {
-	display: flex;
-	justify-content: flex-start;
-	height: var(--table-height);
-	line-height: var(--table-height);
-	border-bottom: 1px solid #eee;
-	padding: 0 10px;
+  display: flex;
+  justify-content: flex-start;
+  height: var(--table-height);
+  line-height: var(--table-height);
+  border-bottom: 1px solid #eee;
+  padding: 0 10px;
 }
 .m-s-l-h-keywords {
-	width: 160px;
-	color: #666;
-	font-size: 12px;
+  width: 160px;
+  color: #666;
+  font-size: 12px;
 }
 .m-s-l-h-description {
-	color: #666;
-	font-size: 12px;
+  flex: 1;
+  color: #666;
+  font-size: 12px;
 }
 .m-s-l-main {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .m-s-l-m-item {
-	display: flex;
-	justify-content: flex-start;
-	font-size: 12px;
-	height: var(--table-height);
-	line-height: var(--table-height);
-	border-bottom: 1px solid #eee;
-	cursor: pointer;
-	padding: 0 10px;
+  display: flex;
+  justify-content: flex-start;
+  font-size: 12px;
+  min-height: var(--table-height);
+  /* line-height: var(--table-height); */
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  padding: 4px 10px;
 }
 .m-s-l-m-item:hover {
-	background-color: rgb(243, 243, 243);
+  background-color: rgb(243, 243, 243);
 }
 .m-s-l-m-i-keywords {
-	width: 160px;
-	color: #000;
+  width: 160px;
+  color: #000;
 }
 .m-s-l-m-i-description {
-	color: #000;
+  flex: 1;
+  color: #000;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
 }
 
 .m-shortcut {
 }
 
 .m-s-main {
-	margin: 0 0 20px 0;
+  margin: 0 0 20px 0;
 }
 
 .m-s-m-item {
-	display: flex;
-	justify-content: space-between;
-	height: var(--table-height);
-	line-height: var(--table-height);
-	font-size: 12px;
-	border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  height: var(--table-height);
+  line-height: var(--table-height);
+  font-size: 12px;
+  border-bottom: 1px solid #eee;
 }
 
 .m-s-m-i-title {
-	color: #000;
+  color: #000;
 }
 
 .m-s-m-i-content {
-	color: #000;
+  color: #000;
 }
